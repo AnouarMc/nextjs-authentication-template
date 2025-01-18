@@ -7,34 +7,30 @@ import SignInForgotPassword from "@/components/auth/sign-in-forgot-password";
 
 import { useState } from "react";
 
-type Step = "password" | "alternative_methods" | "forgot_password" | "otp";
+type Step =
+  | "password"
+  | "alternative_methods"
+  | "alternative_methods_otp"
+  | "forgot_password"
+  | "otp";
 
 const Page = () => {
   const [currentStep, setCurrentStep] = useState<Step>("password");
-  const [showEmailButton, setShowEmailButton] = useState(true);
 
   switch (currentStep) {
     case "password":
       return (
         <SignInPassword
           onForgotPassword={() => setCurrentStep("forgot_password")}
-          onAlternatives={() => {
-            setShowEmailButton(true);
-            setCurrentStep("alternative_methods");
-          }}
+          onAlternatives={() => setCurrentStep("alternative_methods")}
         />
       );
     case "alternative_methods":
       return (
         <SignInAlternatives
-          showEmailButton={showEmailButton}
-          showPasswordButton={!showEmailButton}
-          onOTP={() => setCurrentStep("otp")}
-          onPassword={() => setCurrentStep("password")}
-          onBackLinkClicked={() => {
-            if (showEmailButton) setCurrentStep("password");
-            else setCurrentStep("otp");
-          }}
+          showEmailButton={true}
+          onPrimaryAction={() => setCurrentStep("otp")}
+          onBackLinkClicked={() => setCurrentStep("password")}
         />
       );
     case "forgot_password":
@@ -47,10 +43,15 @@ const Page = () => {
     case "otp":
       return (
         <SignInOTP
-          onAlternatives={() => {
-            setShowEmailButton(false);
-            setCurrentStep("alternative_methods");
-          }}
+          onAlternatives={() => setCurrentStep("alternative_methods_otp")}
+        />
+      );
+    case "alternative_methods_otp":
+      return (
+        <SignInAlternatives
+          showPasswordButton={true}
+          onPrimaryAction={() => setCurrentStep("password")}
+          onBackLinkClicked={() => setCurrentStep("otp")}
         />
       );
   }

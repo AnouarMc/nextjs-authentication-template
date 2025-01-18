@@ -5,7 +5,7 @@ import SignInAlternatives from "@/components/auth/sign-in-alternatives";
 
 import { useState } from "react";
 
-type Step = "otp" | "alternatives";
+type Step = "otp" | "alternative_methods";
 
 const Page = () => {
   const [currentStep, setCurrentStep] = useState<Step>("otp");
@@ -13,16 +13,14 @@ const Page = () => {
   switch (currentStep) {
     case "otp":
       return (
-        <SignInOTP onAlternatives={() => setCurrentStep("alternatives")} />
+        <SignInOTP
+          onAlternatives={() => setCurrentStep("alternative_methods")}
+        />
       );
 
-    case "alternatives":
+    case "alternative_methods":
       return (
-        <SignInAlternatives
-          onBackLinkClicked={() => setCurrentStep("otp")}
-          showEmailButton={false}
-          showPasswordButton={false}
-        />
+        <SignInAlternatives onBackLinkClicked={() => setCurrentStep("otp")} />
       );
   }
 };

@@ -8,16 +8,14 @@ import { Button } from "@/components/ui/button";
 
 const SignInAlternatives = ({
   onBackLinkClicked,
-  onOTP,
-  onPassword,
+  onPrimaryAction,
   showEmailButton,
   showPasswordButton,
 }: {
   onBackLinkClicked: () => void;
-  onOTP?: () => void;
-  onPassword?: () => void;
-  showEmailButton: boolean;
-  showPasswordButton: boolean;
+  onPrimaryAction?: () => void;
+  showEmailButton?: boolean;
+  showPasswordButton?: boolean;
 }) => {
   const { isLoading } = useAuthContext();
 
@@ -34,14 +32,14 @@ const SignInAlternatives = ({
       >
         <SignInSocial />
 
-        {showEmailButton && <SignInOTPButton onOTP={onOTP} />}
+        {showEmailButton && <SignInOTPButton onOTP={onPrimaryAction} />}
 
         {showPasswordButton && (
           <Button
             variant="outline"
             className="block overflow-hidden text-ellipsis w-full mt-2"
             disabled={isLoading}
-            onClick={onPassword}
+            onClick={onPrimaryAction}
           >
             <Lock className="inline mb-0.5" />
             <span className="pl-2">Sign in with your password</span>
