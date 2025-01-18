@@ -5,6 +5,8 @@ import { createContext, useContext, useState } from "react";
 interface AuthContextType {
   email: string;
   setEmail: (email: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   currentProvider: string;
@@ -19,6 +21,7 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentProvider, setCurrentProvider] = useState("");
 
@@ -27,6 +30,8 @@ export default function AuthProvider({
       value={{
         email,
         setEmail,
+        password,
+        setPassword,
         isLoading,
         setIsLoading,
         currentProvider,

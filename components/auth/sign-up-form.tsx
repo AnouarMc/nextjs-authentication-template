@@ -1,5 +1,6 @@
 "use client";
 
+import { initSignup } from "@/actions/signup";
 import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
@@ -24,26 +25,35 @@ import { CardDescription } from "@/components/ui/card";
 import { signupSchema, signupSchemaType } from "@/schemas";
 
 const SignUpForm = () => {
-  const { setEmail, isLoading, setIsLoading } = useAuthContext();
+  const { email, setEmail, setPassword, isLoading, setIsLoading } =
+    useAuthContext();
   const router = useRouter();
 
   const form = useForm<signupSchemaType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      email: "",
+      email,
       password: "",
     },
   });
   const { isSubmitting } = form.formState;
 
-  const checkEmailAvailable = form.handleSubmit(async () => {
-    // TODO: check if email available redirect to verification route
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setEmail(form.getValues("email"));
-    router.push("/sign-up/verify-email-address");
-    setIsLoading(false);
-  });
+  const checkEmailAvailable = form.handleSubmit(
+    async (credentials: signupSchemaType) => {
+      setIsLoading(true);
+      const { success, errors } = await initSignup(credentials);
+      if (success) {
+        setEmail(form.getValues("email"));
+        setPassword(form.getValues("password"));
+        router.push("/sign-up/verify-email-address");
+      } else {
+        errors?.forEach(({ name, message }) =>
+          form.setError(name as keyof signupSchemaType, { message })
+        );
+      }
+      setIsLoading(false);
+    }
+  );
 
   return (
     <AuthCard

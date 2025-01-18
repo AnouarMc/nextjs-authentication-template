@@ -1,7 +1,8 @@
 import { publicRoutes, authRoutesPrefixes, redirectUrl } from "@/constants";
-
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
+
+const { auth } = NextAuth({ providers: [] });
 
 export default auth((request) => {
   const { pathname } = request.nextUrl;
