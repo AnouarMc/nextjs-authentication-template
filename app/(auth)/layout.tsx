@@ -1,6 +1,6 @@
-import EmailProvider from "@/providers/email-provider";
+import AuthProvider from "@/providers/auth-provider";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  return <EmailProvider>{children}</EmailProvider>;
+  return <AuthProvider>{children}</AuthProvider>;
 };
 export default Layout;
