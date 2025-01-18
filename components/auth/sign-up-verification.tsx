@@ -1,12 +1,13 @@
 "use client";
 
 import Logo from "@/components/logo";
-import { useEmail } from "@/providers/email-provider";
+import { useAuthContext } from "@/providers/auth-provider";
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -31,7 +32,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignUpVerification = () => {
-  const { email } = useEmail();
+  const { email, isLoading, setIsLoading } = useAuthContext();
   const router = useRouter();
 
   const form = useForm<otpSchemaType>({
@@ -43,8 +44,10 @@ const SignUpVerification = () => {
   const { isSubmitting } = form.formState;
 
   const verifyEmail = form.handleSubmit(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     // TODO: verify token and signup user and redirect to dashboard
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setIsLoading(false);
   });
 
   return (
@@ -71,7 +74,7 @@ const SignUpVerification = () => {
                         autoFocus
                         maxLength={6}
                         pattern={REGEXP_ONLY_DIGITS}
-                        disabled={isSubmitting}
+                        disabled={isLoading}
                         onComplete={verifyEmail}
                         {...field}
                       >
@@ -88,21 +91,18 @@ const SignUpVerification = () => {
               )}
             />
 
-            <Button className="w-full" type="submit" disabled={isSubmitting}>
+            <Button className="w-full" type="submit" disabled={isLoading}>
               {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
-            </Button>
-
-            <Button
-              className="mt-4"
-              variant="link"
-              type="button"
-              onClick={() => router.back()}
-            >
-              Back
             </Button>
           </form>
         </Form>
       </CardContent>
+
+      <CardFooter className="justify-center">
+        <Button variant="link" onClick={() => router.back()}>
+          Back
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
