@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: acmeinc_db
+      POSTGRES_USER: acmeinc_user
+      POSTGRES_PASSWORD: tE1_3H8xpiGuDt_zEcIp
