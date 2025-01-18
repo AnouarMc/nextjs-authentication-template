@@ -1,15 +1,7 @@
 "use client";
 
-import Logo from "@/components/logo";
+import AuthCard from "@/components/auth/auth-card";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -33,7 +25,7 @@ const SignInPassword = ({
   onAlternatives: () => void;
   onForgotPassword: () => void;
 }) => {
-  const { email, isLoading, setIsLoading } = useAuthContext();
+  const { isLoading, setIsLoading } = useAuthContext();
   const form = useForm<passwordSchemaType>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -50,60 +42,53 @@ const SignInPassword = ({
   });
 
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>Enter your password</CardTitle>
-        <CardDescription>
-          Enter the password associated with your account
-        </CardDescription>
-        <CardDescription>{email}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={handleSignIn} className="space-y-5 text-left">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel>Password</FormLabel>
-                    <Button
-                      className="h-4 p-0"
-                      variant="link"
-                      type="button"
-                      onClick={onForgotPassword}
-                    >
-                      Forgot Password?
-                    </Button>
-                  </div>
-                  <FormControl>
-                    <Input
-                      autoFocus
-                      disabled={isLoading}
-                      {...field}
-                      type="password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-
-      <CardFooter className="justify-center">
+    <AuthCard
+      title="Enter your password"
+      subtitle="Enter the password associated with your account"
+      showEmail
+      footer={
         <Button variant="link" type="button" onClick={onAlternatives}>
           Use another method
         </Button>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <Form {...form}>
+        <form onSubmit={handleSignIn} className="space-y-5 text-left">
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Button
+                    className="h-4 p-0"
+                    variant="link"
+                    type="button"
+                    onClick={onForgotPassword}
+                  >
+                    Forgot Password?
+                  </Button>
+                </div>
+                <FormControl>
+                  <Input
+                    autoFocus
+                    disabled={isLoading}
+                    {...field}
+                    type="password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
+          </Button>
+        </form>
+      </Form>
+    </AuthCard>
   );
 };
 export default SignInPassword;

@@ -1,17 +1,9 @@
-import Logo from "@/components/logo";
+import AuthCard from "@/components/auth/auth-card";
+import SignInSocial from "@/components/auth/sign-in-social";
+import SignInOTPButton from "@/components/auth/sign-in-otp-button";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "../ui/button";
-import SignInSocial from "./sign-in-social";
-import { Separator } from "../ui/separator";
-
-import SignInOTPButton from "./sign-in-otp-button";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const SignInForgotPassword = ({
   onBackLinkClicked,
@@ -21,12 +13,15 @@ const SignInForgotPassword = ({
   onOTP: () => void;
 }) => {
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>Forgot Password?</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <>
+      <AuthCard
+        title="Forgot Password?"
+        footer={
+          <Button variant="link" onClick={onBackLinkClicked}>
+            Back
+          </Button>
+        }
+      >
         <Button className="w-full">Reset your password</Button>
         <div className="flex items-center gap-x-4 py-6">
           <Separator className="shrink" />
@@ -38,14 +33,8 @@ const SignInForgotPassword = ({
 
         <SignInSocial />
         <SignInOTPButton onOTP={onOTP} />
-      </CardContent>
-
-      <CardFooter className="justify-center">
-        <Button variant="link" onClick={onBackLinkClicked}>
-          Back
-        </Button>
-      </CardFooter>
-    </Card>
+      </AuthCard>
+    </>
   );
 };
 export default SignInForgotPassword;

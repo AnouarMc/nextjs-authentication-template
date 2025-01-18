@@ -1,19 +1,10 @@
-import Logo from "@/components/logo";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "../ui/button";
-import SignInSocial from "./sign-in-social";
-
-import SignInOTPButton from "./sign-in-otp-button";
+import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
+import SignInSocial from "@/components/auth/sign-in-social";
+import SignInOTPButton from "@/components/auth/sign-in-otp-button";
+
 import { Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const SignInAlternatives = ({
   onBackLinkClicked,
@@ -31,15 +22,16 @@ const SignInAlternatives = ({
   const { isLoading } = useAuthContext();
 
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>Use another method</CardTitle>
-        <CardDescription>
-          Facing issues? You can use any of these methods to sign in
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <>
+      <AuthCard
+        title="Use another method"
+        subtitle="Facing issues? You can use any of these methods to sign in"
+        footer={
+          <Button variant="link" onClick={onBackLinkClicked}>
+            Back
+          </Button>
+        }
+      >
         <SignInSocial />
 
         {showEmailButton && <SignInOTPButton onOTP={onOTP} />}
@@ -55,14 +47,8 @@ const SignInAlternatives = ({
             <span className="pl-2">Sign in with your password</span>
           </Button>
         )}
-      </CardContent>
-
-      <CardFooter className="justify-center">
-        <Button variant="link" onClick={onBackLinkClicked}>
-          Back
-        </Button>
-      </CardFooter>
-    </Card>
+      </AuthCard>
+    </>
   );
 };
 export default SignInAlternatives;

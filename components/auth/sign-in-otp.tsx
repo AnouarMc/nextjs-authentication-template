@@ -1,16 +1,8 @@
 "use client";
 
-import Logo from "@/components/logo";
+import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -31,7 +23,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
-  const { email, isLoading, setIsLoading } = useAuthContext();
+  const { isLoading, setIsLoading } = useAuthContext();
 
   const form = useForm<otpSchemaType>({
     resolver: zodResolver(otpSchema),
@@ -49,56 +41,51 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
   });
 
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>Check your email</CardTitle>
-        <CardDescription>{email}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={verifyEmail} className="space-y-6 text-center">
-            <FormField
-              control={form.control}
-              name="otpCode"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex flex-col items-center">
-                    <FormControl>
-                      <InputOTP
-                        autoFocus
-                        maxLength={6}
-                        pattern={REGEXP_ONLY_DIGITS}
-                        disabled={isLoading}
-                        onComplete={verifyEmail}
-                        {...field}
-                      >
-                        {[...Array(6)].map((_, index) => (
-                          <InputOTPGroup key={index}>
-                            <InputOTPSlot index={index} />
-                          </InputOTPGroup>
-                        ))}
-                      </InputOTP>
-                    </FormControl>
-                    <FormMessage className="mt-4" />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-
-      <CardFooter className="justify-center">
+    <AuthCard
+      title="Check your email"
+      showEmail
+      footer={
         <Button variant="link" type="button" onClick={onAlternatives}>
           Use another method
         </Button>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <Form {...form}>
+        <form onSubmit={verifyEmail} className="space-y-6 text-center">
+          <FormField
+            control={form.control}
+            name="otpCode"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex flex-col items-center">
+                  <FormControl>
+                    <InputOTP
+                      autoFocus
+                      maxLength={6}
+                      pattern={REGEXP_ONLY_DIGITS}
+                      disabled={isLoading}
+                      onComplete={verifyEmail}
+                      {...field}
+                    >
+                      {[...Array(6)].map((_, index) => (
+                        <InputOTPGroup key={index}>
+                          <InputOTPSlot index={index} />
+                        </InputOTPGroup>
+                      ))}
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage className="mt-4" />
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
+          </Button>
+        </form>
+      </Form>
+    </AuthCard>
   );
 };
 export default SignInOTP;

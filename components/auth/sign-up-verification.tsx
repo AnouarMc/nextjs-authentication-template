@@ -1,16 +1,8 @@
 "use client";
 
-import Logo from "@/components/logo";
+import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -32,7 +24,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignUpVerification = () => {
-  const { email, isLoading, setIsLoading } = useAuthContext();
+  const { isLoading, setIsLoading } = useAuthContext();
   const router = useRouter();
 
   const form = useForm<otpSchemaType>({
@@ -51,59 +43,52 @@ const SignUpVerification = () => {
   });
 
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>Verify your email</CardTitle>
-        <CardDescription>
-          Enter the verification code sent to your email
-        </CardDescription>
-        <CardDescription>{email}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={verifyEmail} className="space-y-6 text-center">
-            <FormField
-              control={form.control}
-              name="otpCode"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex flex-col items-center">
-                    <FormControl>
-                      <InputOTP
-                        autoFocus
-                        maxLength={6}
-                        pattern={REGEXP_ONLY_DIGITS}
-                        disabled={isLoading}
-                        onComplete={verifyEmail}
-                        {...field}
-                      >
-                        {[...Array(6)].map((_, index) => (
-                          <InputOTPGroup key={index}>
-                            <InputOTPSlot index={index} />
-                          </InputOTPGroup>
-                        ))}
-                      </InputOTP>
-                    </FormControl>
-                    <FormMessage className="mt-4" />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-
-      <CardFooter className="justify-center">
+    <AuthCard
+      title="Verify your email"
+      subtitle="Enter the verification code sent to your email"
+      showEmail
+      footer={
         <Button variant="link" onClick={() => router.back()}>
           Back
         </Button>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <Form {...form}>
+        <form onSubmit={verifyEmail} className="space-y-6 text-center">
+          <FormField
+            control={form.control}
+            name="otpCode"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex flex-col items-center">
+                  <FormControl>
+                    <InputOTP
+                      autoFocus
+                      maxLength={6}
+                      pattern={REGEXP_ONLY_DIGITS}
+                      disabled={isLoading}
+                      onComplete={verifyEmail}
+                      {...field}
+                    >
+                      {[...Array(6)].map((_, index) => (
+                        <InputOTPGroup key={index}>
+                          <InputOTPSlot index={index} />
+                        </InputOTPGroup>
+                      ))}
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage className="mt-4" />
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
+          </Button>
+        </form>
+      </Form>
+    </AuthCard>
   );
 };
 export default SignUpVerification;
