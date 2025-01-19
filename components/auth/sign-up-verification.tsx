@@ -1,5 +1,6 @@
 "use client";
 
+import { signup } from "@/actions/signup";
 import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
 
@@ -24,7 +25,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignUpVerification = () => {
-  const { isLoading, setIsLoading } = useAuthContext();
+  const { email, password, isLoading, setIsLoading } = useAuthContext();
   const router = useRouter();
 
   const form = useForm<otpSchemaType>({
@@ -35,10 +36,16 @@ const SignUpVerification = () => {
   });
   const { isSubmitting } = form.formState;
 
-  const verifyEmail = form.handleSubmit(async () => {
-    // TODO: verify token and signup user and redirect to dashboard
+  const finalizeSignup = form.handleSubmit(async (code: otpSchemaType) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const { success, errors } = await signup({ email, password }, code);
+    if (success) {
+      router.push("/dashboard/profile");
+    } else {
+      errors?.forEach(({ name, message }) =>
+        form.setError(name as keyof otpSchemaType, { message })
+      );
+    }
     setIsLoading(false);
   });
 
@@ -54,7 +61,7 @@ const SignUpVerification = () => {
       }
     >
       <Form {...form}>
-        <form onSubmit={verifyEmail} className="space-y-6 text-center">
+        <form onSubmit={finalizeSignup} className="space-y-6 text-center">
           <FormField
             control={form.control}
             name="otpCode"
@@ -67,7 +74,7 @@ const SignUpVerification = () => {
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
                       disabled={isLoading}
-                      onComplete={verifyEmail}
+                      onComplete={finalizeSignup}
                       {...field}
                     >
                       {[...Array(6)].map((_, index) => (

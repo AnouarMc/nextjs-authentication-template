@@ -1,8 +1,8 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { defaultError } from "@/constants";
 import { emailSchema } from "@/schemas";
+import { defaultError } from "@/constants";
 
 export const sendVerification = async (email: string) => {
   try {
