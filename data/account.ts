@@ -6,3 +6,22 @@ export const getAccountByEmail = async (email: string) => {
     where: { email },
   });
 };
+
+export const updateAccountEmail = async (
+  provider: string,
+  providerAccountId: string,
+  email?: string | null
+) => {
+  const updatedAccount = await db.account.update({
+    data: {
+      email,
+    },
+    where: {
+      provider_providerAccountId: {
+        provider,
+        providerAccountId,
+      },
+    },
+  });
+  return updatedAccount;
+};

@@ -25,3 +25,20 @@ export const createUserAndAccount = async (email: string, password: string) => {
 
   return newUser;
 };
+
+export const updateUserImage = async (
+  userId: string,
+  image?: string | null
+) => {
+  await db.user.update({
+    data: { image },
+    where: { id: userId },
+  });
+};
+
+export const updateUserName = async (userId: string, name?: string | null) => {
+  await db.user.update({
+    data: { name },
+    where: { id: userId },
+  });
+};

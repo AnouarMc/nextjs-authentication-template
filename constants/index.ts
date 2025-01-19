@@ -1,4 +1,5 @@
 export const publicRoutes = ["/"];
+export const authApiPrefix = "/api/auth/";
 export const authRoutesPrefixes = ["/sign-in", "/sign-up"];
 export const redirectUrl = "/dashboard/profile";
 

@@ -1,8 +1,10 @@
 import { useAuthContext } from "@/providers/auth-provider";
-import { Button } from "../ui/button";
-import { FaGithub } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
+
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
 
 export const providers = [
   { provider: "github" as const, name: "GitHub", icon: <FaGithub /> },
@@ -16,9 +18,7 @@ const SignInSocial = () => {
   const signInWithProvider = async (provider: "google" | "github") => {
     setIsLoading(true);
     setCurrentProvider(provider);
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
+    await signIn(provider);
     setIsLoading(false);
     setCurrentProvider("");
   };

@@ -1,4 +1,9 @@
-import { publicRoutes, authRoutesPrefixes, redirectUrl } from "@/constants";
+import {
+  publicRoutes,
+  authApiPrefix,
+  authRoutesPrefixes,
+  redirectUrl,
+} from "@/constants";
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -7,8 +12,9 @@ const { auth } = NextAuth({ providers: [] });
 export default auth((request) => {
   const { pathname } = request.nextUrl;
 
+  const isApiRoute = pathname.startsWith(authApiPrefix);
   const isPublicRoute = publicRoutes.includes(pathname);
-  if (isPublicRoute) {
+  if (isPublicRoute || isApiRoute) {
     return NextResponse.next();
   }
 
