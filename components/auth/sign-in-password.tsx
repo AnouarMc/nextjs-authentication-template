@@ -1,6 +1,8 @@
 "use client";
 
 import AuthCard from "@/components/auth/auth-card";
+import { signInWithPassword } from "@/actions/signin";
+import { useAuthContext } from "@/providers/auth-provider";
 
 import {
   Form,
@@ -25,6 +27,7 @@ const SignInPassword = ({
   onAlternatives: () => void;
   onForgotPassword: () => void;
 }) => {
+  const { email, setPassword } = useAuthContext();
   const { isLoading, setIsLoading } = useLoadingState();
   const form = useForm<passwordSchemaType>({
     resolver: zodResolver(passwordSchema),
@@ -34,10 +37,15 @@ const SignInPassword = ({
   });
   const { isSubmitting } = form.formState;
 
-  const handleSignIn = form.handleSubmit(async () => {
-    // TODO: check if password match redirect to dashboard
+  const handleSignIn = form.handleSubmit(async ({ password }) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setPassword(password);
+    const { success, errors } = await signInWithPassword({ email, password });
+    if (!success) {
+      errors?.forEach(({ name, message }) =>
+        form.setError(name as keyof passwordSchemaType, { message })
+      );
+    }
     setIsLoading(false);
   });
 

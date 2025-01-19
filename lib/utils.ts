@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatZodErrors = (error: ZodError) => {
   return error.issues.map((issue) => ({
-    name: issue.path[0],
+    name: issue.path[0].toString(),
     message: issue.message,
   }));
 };

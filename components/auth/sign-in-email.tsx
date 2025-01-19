@@ -1,8 +1,10 @@
 "use client";
 
+import { checkEmail } from "@/actions/signin";
 import AuthCard from "@/components/auth/auth-card";
 import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 import {
   Form,
@@ -15,19 +17,17 @@ import {
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardDescription } from "@/components/ui/card";
 import { emailSchema, emailSchemaType } from "@/schemas";
-import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInEmail = () => {
   const { setEmail } = useAuthContext();
   const { isLoading, setIsLoading } = useLoadingState();
-  const router = useRouter();
 
   const form = useForm<emailSchemaType>({
     resolver: zodResolver(emailSchema),
@@ -37,13 +37,15 @@ const SignInEmail = () => {
   });
   const { isSubmitting } = form.formState;
 
-  const checkEmailExist = form.handleSubmit(async () => {
-    // TODO: check if email exist redirect to password route or otp route
+  const checkEmailExist = form.handleSubmit(async (email: emailSchemaType) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     setEmail(form.getValues("email"));
-    router.push("/sign-in/password");
-    //router.push("/sign-in/otp");
+    const { success, errors } = await checkEmail(email);
+    if (!success) {
+      errors?.forEach(({ name, message }) =>
+        form.setError(name as keyof emailSchemaType, { message })
+      );
+    }
     setIsLoading(false);
   });
 

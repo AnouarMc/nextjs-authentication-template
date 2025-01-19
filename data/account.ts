@@ -1,8 +1,18 @@
 import "server-only";
-import { db } from "./db";
+
+import { db } from "@/data/db";
 
 export const getAccountByEmail = async (email: string) => {
   return await db.account.findFirst({
+    where: { email },
+  });
+};
+
+export const getAccountAndUser = async (email: string) => {
+  return await db.account.findFirst({
+    include: {
+      user: true,
+    },
     where: { email },
   });
 };
