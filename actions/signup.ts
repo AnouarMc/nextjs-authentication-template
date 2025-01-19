@@ -2,16 +2,19 @@
 
 import { defaultError } from "@/constants";
 import { formatZodErrors } from "@/lib/utils";
+import { createUserAndAccount } from "@/data/user";
 import { getAccountByEmail } from "@/data/account";
-import { sendVerification } from "@/actions/verification";
+import { verifyTokenOrThrow } from "@/data/verification";
+
 import {
   otpSchema,
   otpSchemaType,
   signupSchema,
   signupSchemaType,
 } from "@/schemas";
-import { verifyToken } from "@/data/verification";
-import { createUserAndAccount } from "@/data/user";
+import { signIn } from "@/auth";
+import { ExpiredToken, InvalidToken } from "@/types";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export const initSignup = async (creds: signupSchemaType) => {
   try {
@@ -37,8 +40,11 @@ export const initSignup = async (creds: signupSchemaType) => {
       };
     }
 
-    const { success, errors } = await sendVerification(email);
-    return { success, errors };
+    await signIn("verification", {
+      email,
+      redirect: false,
+    });
+    return { success: true };
   } catch (error) {
     console.error(error);
     return defaultError;
@@ -62,21 +68,35 @@ export const signup = async (creds: signupSchemaType, code: otpSchemaType) => {
 
     const { email, password } = validatedCreds.data;
     const { otpCode } = validatedCode.data;
+
     const existingAccount = await getAccountByEmail(email);
     if (existingAccount) {
       return defaultError;
     }
-
-    const { success, errors } = await verifyToken(email, otpCode);
-    if (!success) {
-      return { success, errors };
-    }
+    await verifyTokenOrThrow(email, otpCode);
 
     await createUserAndAccount(email, password);
     // TODO: sign in user
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    switch (true) {
+      case error instanceof InvalidToken:
+        return {
+          success: false,
+          errors: [{ name: "otpCode", message: "Invalid code" }],
+        };
+      case error instanceof ExpiredToken:
+        return {
+          success: false,
+          errors: [{ name: "otpCode", message: "This code has expired" }],
+        };
+    }
+
     console.error(error);
     return defaultError;
   }

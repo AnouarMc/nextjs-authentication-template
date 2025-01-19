@@ -2,10 +2,11 @@ import "server-only";
 
 import { db } from "@/data/db";
 import { createHash } from "node:crypto";
+import { ExpiredToken, InvalidToken } from "@/types";
 
 const authSecret = process.env.AUTH_SECRET;
 
-export const verifyToken = async (
+export const verifyTokenOrThrow = async (
   email: string,
   token: string,
   shouldDelete: boolean = true
@@ -21,10 +22,10 @@ export const verifyToken = async (
     },
   });
   if (!verification) {
-    return {
-      success: false,
-      errors: [{ name: "token", message: "Invalid code" }],
-    };
+    throw new InvalidToken();
+  }
+  if (new Date() > verification.expires) {
+    throw new ExpiredToken();
   }
 
   if (shouldDelete) {
@@ -34,14 +35,5 @@ export const verifyToken = async (
         token: hashedToken,
       },
     });
-  }
-
-  if (new Date() > verification.expires) {
-    return {
-      success: false,
-      errors: [{ name: "token", message: "This code has expired" }],
-    };
-  } else {
-    return { success: true };
   }
 };

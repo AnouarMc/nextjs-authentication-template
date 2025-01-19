@@ -1,6 +1,8 @@
 "use client";
 
 import AuthCard from "@/components/auth/auth-card";
+import { signInWithToken } from "@/actions/signin";
+import { useAuthContext } from "@/providers/auth-provider";
 import { useLoadingState } from "@/providers/loading-state-provider";
 
 import {
@@ -23,6 +25,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
+  const { email } = useAuthContext();
   const { isLoading, setIsLoading } = useLoadingState();
 
   const form = useForm<otpSchemaType>({
@@ -33,10 +36,15 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
   });
   const { isSubmitting } = form.formState;
 
-  const verifyEmail = form.handleSubmit(async () => {
-    // TODO: verify token and signup user and redirect to dashboard
+  const verifyEmail = form.handleSubmit(async ({ otpCode }) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const { success, errors } = await signInWithToken(email, otpCode);
+    if (!success) {
+      debugger;
+      errors?.forEach(({ name, message }) =>
+        form.setError(name as keyof otpSchemaType, { message })
+      );
+    }
     setIsLoading(false);
   });
 

@@ -29,7 +29,7 @@ const PageContent = () => {
     case "alternative_methods":
       return (
         <SignInAlternatives
-          showEmailButton={true}
+          showEmailButton
           onPrimaryAction={() => setCurrentStep("otp")}
           onBackLinkClicked={() => setCurrentStep("password")}
         />
@@ -50,7 +50,7 @@ const PageContent = () => {
     case "alternative_methods_otp":
       return (
         <SignInAlternatives
-          showPasswordButton={true}
+          showPasswordButton
           onPrimaryAction={() => setCurrentStep("password")}
           onBackLinkClicked={() => setCurrentStep("otp")}
         />

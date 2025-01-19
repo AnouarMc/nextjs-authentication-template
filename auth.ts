@@ -1,6 +1,7 @@
 import { db } from "@/data/db";
 import { sendEmail } from "@/lib/email";
 import { tokenTTLInSeconds } from "@/constants";
+import { verifyTokenOrThrow } from "@/data/verification";
 import { updateUserImage, updateUserName } from "@/data/user";
 import { getAccountAndUser, updateAccountEmail } from "@/data/account";
 
@@ -42,6 +43,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredentialsSignin();
         }
 
+        return user;
+      },
+    }),
+    Credentials({
+      id: "EmailAndOTP",
+      async authorize({ email, otpCode }) {
+        await verifyTokenOrThrow(email as string, otpCode as string);
+
+        const account = await getAccountAndUser(email as string);
+        const user = account?.user;
+        if (!account || !user) {
+          throw new CredentialsSignin();
+        }
         return user;
       },
     }),
