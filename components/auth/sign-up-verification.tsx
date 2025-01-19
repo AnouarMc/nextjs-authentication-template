@@ -23,9 +23,11 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignUpVerification = () => {
-  const { email, password, isLoading, setIsLoading } = useAuthContext();
+  const { email, password } = useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
   const router = useRouter();
 
   const form = useForm<otpSchemaType>({

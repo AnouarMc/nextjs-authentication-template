@@ -4,10 +4,11 @@ import SignInOTP from "@/components/auth/sign-in-otp";
 import SignInAlternatives from "@/components/auth/sign-in-alternatives";
 
 import { useState } from "react";
+import LoadingStateProvider from "@/providers/loading-state-provider";
 
 type Step = "otp" | "alternative_methods";
 
-const Page = () => {
+const PageContent = () => {
   const [currentStep, setCurrentStep] = useState<Step>("otp");
 
   switch (currentStep) {
@@ -24,4 +25,13 @@ const Page = () => {
       );
   }
 };
+
+const Page = () => {
+  return (
+    <LoadingStateProvider>
+      <PageContent />
+    </LoadingStateProvider>
+  );
+};
+
 export default Page;

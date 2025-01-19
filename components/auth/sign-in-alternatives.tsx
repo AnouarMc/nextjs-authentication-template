@@ -1,10 +1,10 @@
 import AuthCard from "@/components/auth/auth-card";
-import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
 import SignInOTPButton from "@/components/auth/sign-in-otp-button";
 
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInAlternatives = ({
   onBackLinkClicked,
@@ -17,7 +17,7 @@ const SignInAlternatives = ({
   showEmailButton?: boolean;
   showPasswordButton?: boolean;
 }) => {
-  const { isLoading } = useAuthContext();
+  const { isLoading } = useLoadingState();
 
   return (
     <>

@@ -1,9 +1,11 @@
 import { MdOutlineMail } from "react-icons/md";
 import { Button } from "../ui/button";
 import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInOTPButton = ({ onOTP }: { onOTP?: () => void }) => {
-  const { email, isLoading } = useAuthContext();
+  const { email } = useAuthContext();
+  const { isLoading } = useLoadingState();
   return (
     <Button
       variant="outline"

@@ -23,10 +23,11 @@ import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardDescription } from "@/components/ui/card";
 import { signupSchema, signupSchemaType } from "@/schemas";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignUpForm = () => {
-  const { email, setEmail, setPassword, isLoading, setIsLoading } =
-    useAuthContext();
+  const { email, setEmail, setPassword } = useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
   const router = useRouter();
 
   const form = useForm<signupSchemaType>({

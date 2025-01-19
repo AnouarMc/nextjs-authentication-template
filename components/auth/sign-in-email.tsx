@@ -22,9 +22,11 @@ import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardDescription } from "@/components/ui/card";
 import { emailSchema, emailSchemaType } from "@/schemas";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInEmail = () => {
-  const { setEmail, isLoading, setIsLoading } = useAuthContext();
+  const { setEmail } = useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
   const router = useRouter();
 
   const form = useForm<emailSchemaType>({

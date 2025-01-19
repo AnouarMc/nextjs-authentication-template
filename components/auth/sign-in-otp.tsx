@@ -1,7 +1,7 @@
 "use client";
 
 import AuthCard from "@/components/auth/auth-card";
-import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 import {
   Form,
@@ -23,7 +23,7 @@ import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
-  const { isLoading, setIsLoading } = useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
 
   const form = useForm<otpSchemaType>({
     resolver: zodResolver(otpSchema),

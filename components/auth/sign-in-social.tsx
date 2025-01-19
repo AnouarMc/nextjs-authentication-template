@@ -1,5 +1,6 @@
-import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
@@ -12,15 +13,15 @@ export const providers = [
 ];
 
 const SignInSocial = () => {
-  const { isLoading, setIsLoading, currentProvider, setCurrentProvider } =
-    useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
+  const [loadingProvider, setLoadingProvider] = useState("");
 
   const signInWithProvider = async (provider: "google" | "github") => {
     setIsLoading(true);
-    setCurrentProvider(provider);
+    setLoadingProvider(provider);
     await signIn(provider);
     setIsLoading(false);
-    setCurrentProvider("");
+    setLoadingProvider("");
   };
 
   return (
@@ -33,7 +34,7 @@ const SignInSocial = () => {
           disabled={isLoading}
           onClick={() => signInWithProvider(provider)}
         >
-          {provider === currentProvider ? (
+          {provider === loadingProvider ? (
             <Loader2 className="animate-spin" />
           ) : (
             <>

@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordSchema, passwordSchemaType } from "@/schemas";
-import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInPassword = ({
   onAlternatives,
@@ -25,7 +25,7 @@ const SignInPassword = ({
   onAlternatives: () => void;
   onForgotPassword: () => void;
 }) => {
-  const { isLoading, setIsLoading } = useAuthContext();
+  const { isLoading, setIsLoading } = useLoadingState();
   const form = useForm<passwordSchemaType>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {

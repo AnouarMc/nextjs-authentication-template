@@ -2,6 +2,7 @@
 
 import SignInOTP from "@/components/auth/sign-in-otp";
 import SignInPassword from "@/components/auth/sign-in-password";
+import LoadingStateProvider from "@/providers/loading-state-provider";
 import SignInAlternatives from "@/components/auth/sign-in-alternatives";
 import SignInForgotPassword from "@/components/auth/sign-in-forgot-password";
 
@@ -14,7 +15,7 @@ type Step =
   | "forgot_password"
   | "otp";
 
-const Page = () => {
+const PageContent = () => {
   const [currentStep, setCurrentStep] = useState<Step>("password");
 
   switch (currentStep) {
@@ -55,5 +56,13 @@ const Page = () => {
         />
       );
   }
+};
+
+const Page = () => {
+  return (
+    <LoadingStateProvider>
+      <PageContent />
+    </LoadingStateProvider>
+  );
 };
 export default Page;

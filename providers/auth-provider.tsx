@@ -7,10 +7,6 @@ interface AuthContextType {
   setEmail: (email: string) => void;
   password: string;
   setPassword: (password: string) => void;
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
-  currentProvider: string;
-  setCurrentProvider: (provider: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,8 +18,6 @@ export default function AuthProvider({
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentProvider, setCurrentProvider] = useState("");
 
   return (
     <AuthContext.Provider
@@ -32,10 +26,6 @@ export default function AuthProvider({
         setEmail,
         password,
         setPassword,
-        isLoading,
-        setIsLoading,
-        currentProvider,
-        setCurrentProvider,
       }}
     >
       {children}
