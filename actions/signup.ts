@@ -44,7 +44,7 @@ export const initSignup = async (creds: signupSchemaType) => {
       email,
       redirect: false,
     });
-    return { success: true };
+    return { success: true, errors: null };
   } catch (error) {
     console.error(error);
     return defaultError;
@@ -78,7 +78,7 @@ export const signup = async (creds: signupSchemaType, code: otpSchemaType) => {
     await createUserAndAccount(email, password);
     // TODO: sign in user
 
-    return { success: true };
+    return { success: true, errors: null };
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;

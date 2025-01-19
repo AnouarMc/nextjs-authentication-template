@@ -2,8 +2,10 @@
 
 import { initSignup } from "@/actions/signup";
 import AuthCard from "@/components/auth/auth-card";
+import FormError from "@/components/auth/form-error";
 import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 import {
   Form,
@@ -23,7 +25,6 @@ import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardDescription } from "@/components/ui/card";
 import { signupSchema, signupSchemaType } from "@/schemas";
-import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignUpForm = () => {
   const { email, setEmail, setPassword } = useAuthContext();
@@ -37,7 +38,7 @@ const SignUpForm = () => {
       password: "",
     },
   });
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const checkEmailAvailable = form.handleSubmit(
     async (credentials: signupSchemaType) => {
@@ -70,6 +71,7 @@ const SignUpForm = () => {
       </div>
       <Form {...form}>
         <form onSubmit={checkEmailAvailable} className="space-y-5 text-left">
+          <FormError message={errors.root?.message} />
           <FormField
             control={form.control}
             name="email"

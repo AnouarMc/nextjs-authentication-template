@@ -1,8 +1,10 @@
 "use client";
 
 import AuthCard from "@/components/auth/auth-card";
+import FormError from "@/components/auth/form-error";
 import { signInWithPassword } from "@/actions/signin";
 import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
 import {
   Form,
@@ -18,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordSchema, passwordSchemaType } from "@/schemas";
-import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignInPassword = ({
   onAlternatives,
@@ -35,7 +36,7 @@ const SignInPassword = ({
       password: "",
     },
   });
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const handleSignIn = form.handleSubmit(async ({ password }) => {
     setIsLoading(true);
@@ -62,6 +63,7 @@ const SignInPassword = ({
     >
       <Form {...form}>
         <form onSubmit={handleSignIn} className="space-y-5 text-left">
+          <FormError message={errors.root?.message} />
           <FormField
             control={form.control}
             name="password"

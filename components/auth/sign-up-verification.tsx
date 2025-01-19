@@ -2,7 +2,10 @@
 
 import { signup } from "@/actions/signup";
 import AuthCard from "@/components/auth/auth-card";
+import FormError from "@/components/auth/form-error";
 import { useAuthContext } from "@/providers/auth-provider";
+import { useLoadingState } from "@/providers/loading-state-provider";
+import VerificationCountdown from "@/components/auth/verification-countdown";
 
 import {
   Form,
@@ -23,7 +26,6 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoadingState } from "@/providers/loading-state-provider";
 
 const SignUpVerification = () => {
   const { email, password } = useAuthContext();
@@ -36,7 +38,7 @@ const SignUpVerification = () => {
       otpCode: "",
     },
   });
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const finalizeSignup = form.handleSubmit(async (code: otpSchemaType) => {
     setIsLoading(true);
@@ -64,6 +66,7 @@ const SignUpVerification = () => {
     >
       <Form {...form}>
         <form onSubmit={finalizeSignup} className="space-y-6 text-center">
+          <FormError message={errors.root?.message} />
           <FormField
             control={form.control}
             name="otpCode"
@@ -88,10 +91,10 @@ const SignUpVerification = () => {
                   </FormControl>
                   <FormMessage className="mt-4" />
                 </div>
+                <VerificationCountdown />
               </FormItem>
             )}
           />
-
           <Button className="w-full" type="submit" disabled={isLoading}>
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>

@@ -2,6 +2,7 @@
 
 import { checkEmail } from "@/actions/signin";
 import AuthCard from "@/components/auth/auth-card";
+import FormError from "@/components/auth/form-error";
 import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
 import { useLoadingState } from "@/providers/loading-state-provider";
@@ -35,7 +36,7 @@ const SignInEmail = () => {
       email: "",
     },
   });
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const checkEmailExist = form.handleSubmit(async (email: emailSchemaType) => {
     setIsLoading(true);
@@ -63,6 +64,7 @@ const SignInEmail = () => {
       </div>
       <Form {...form}>
         <form onSubmit={checkEmailExist} className="space-y-5 text-left">
+          <FormError message={errors.root?.message} />
           <FormField
             control={form.control}
             name="email"

@@ -2,8 +2,10 @@
 
 import AuthCard from "@/components/auth/auth-card";
 import { signInWithToken } from "@/actions/signin";
+import FormError from "@/components/auth/form-error";
 import { useAuthContext } from "@/providers/auth-provider";
 import { useLoadingState } from "@/providers/loading-state-provider";
+import VerificationCountdown from "@/components/auth/verification-countdown";
 
 import {
   Form,
@@ -34,7 +36,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
       otpCode: "",
     },
   });
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const verifyEmail = form.handleSubmit(async ({ otpCode }) => {
     setIsLoading(true);
@@ -60,6 +62,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
     >
       <Form {...form}>
         <form onSubmit={verifyEmail} className="space-y-6 text-center">
+          <FormError message={errors.root?.message} />
           <FormField
             control={form.control}
             name="otpCode"
@@ -84,6 +87,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
                   </FormControl>
                   <FormMessage className="mt-4" />
                 </div>
+                <VerificationCountdown />
               </FormItem>
             )}
           />
