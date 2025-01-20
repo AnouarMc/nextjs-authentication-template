@@ -6,3 +6,9 @@ export class ExpiredToken extends AuthError {
 export class InvalidToken extends AuthError {
   static type = "InvalidToken";
 }
+
+export interface AccountCustomProps {
+  email: string;
+  provider: string;
+  isPrimary: boolean;
+}

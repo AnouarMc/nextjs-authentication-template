@@ -16,7 +16,11 @@ const DashboardCard = ({ title, subtitle, children }: DashboardCardProps) => {
     <Card className="w-[360px] max-w-full">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {subtitle && <CardDescription>{subtitle}</CardDescription>}
+        {subtitle && (
+          <CardDescription className="overflow-hidden text-ellipsis">
+            {subtitle}
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent className="-mt-4">{children}</CardContent>
     </Card>
