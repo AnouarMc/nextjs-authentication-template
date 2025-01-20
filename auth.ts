@@ -13,7 +13,13 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const {
+  handlers,
+  auth,
+  signIn,
+  signOut,
+  unstable_update: updateServerSession,
+} = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   providers: [
@@ -74,8 +80,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   ],
   callbacks: {
+    async jwt({ token, session, trigger, user }) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+      if (user) {
+        token = { ...token, ...user };
+      }
+      return token;
+    },
+
     async session({ session, token }) {
       session.user.id = token.sub as string;
+      session.user.image = token.image as string;
       return session;
     },
   },

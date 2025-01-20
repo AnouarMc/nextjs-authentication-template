@@ -1,3 +1,7 @@
+import {
+  revalidateDashboard,
+  updateProfileName,
+} from "@/actions/manage-account";
 import FormError from "@/components/auth/form-error";
 import { useLoadingState } from "@/providers/loading-state-provider";
 
@@ -18,7 +22,7 @@ import { Button } from "@/components/ui/button";
 const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
   const { isLoading, setIsLoading } = useLoadingState();
 
-  const form = useForm({
+  const form = useForm<{ name: string }>({
     defaultValues: {
       name: user.name ?? "",
     },
@@ -26,16 +30,23 @@ const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
 
   const { isSubmitting, errors } = form.formState;
 
-  const onUpdate = form.handleSubmit(async () => {
+  const onUpdate = form.handleSubmit(async ({ name }) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const { success, errors } = await updateProfileName(name);
+    if (success) {
+      await revalidateDashboard();
+      onClose();
+    } else {
+      errors?.forEach(({ name, message }) => {
+        form.setError(name as keyof { name: string }, { message });
+      });
+    }
     setIsLoading(false);
-    onClose();
   });
 
   return (
     <Form {...form}>
-      <form onSubmit={onUpdate} className="mt-6 space-y-6 text-left">
+      <form onSubmit={onUpdate} className="mt-6 text-left">
         <FormError message={errors.root?.message} />
         <FormField
           control={form.control}
@@ -50,7 +61,7 @@ const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
             </FormItem>
           )}
         />
-        <div className="flex gap-x-2 justify-end">
+        <div className="flex gap-x-2 justify-end mt-6">
           <Button
             type="button"
             variant="ghost"

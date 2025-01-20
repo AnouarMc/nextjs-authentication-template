@@ -18,6 +18,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { imageSchema, imageSchemaType } from "@/schemas";
 import { useRef, useImperativeHandle, useState } from "react";
 import { acceptedImageTypes, maxFileSizeText } from "@/constants";
+import {
+  revalidateDashboard,
+  updateProfileImage,
+} from "@/actions/manage-account";
 
 const UpdateImage = ({ user }: { user: User }) => {
   const { isLoading, setIsLoading } = useLoadingState();
@@ -42,10 +46,17 @@ const UpdateImage = ({ user }: { user: User }) => {
     setImgLoadingState("");
   };
 
-  const onUpload = form.handleSubmit(async () => {
+  const onUpload = form.handleSubmit(async (image) => {
     setIsLoading(true);
     setImgLoadingState("upload");
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const { success, errors } = await updateProfileImage(image);
+    if (success) {
+      await revalidateDashboard();
+    } else {
+      errors?.forEach(({ name, message }) =>
+        form.setError(name as keyof imageSchemaType, { message })
+      );
+    }
     setIsLoading(false);
     setImgLoadingState("");
   });
