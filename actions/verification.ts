@@ -1,8 +1,12 @@
 "use server";
 
+import { formatZodErrors } from "@/lib/utils";
+import { verifyTokenOrThrow } from "@/data/verification";
+
 import { signIn } from "@/auth";
-import { emailSchema } from "@/schemas";
 import { defaultError } from "@/constants";
+import { emailSchema, otpSchema } from "@/schemas";
+import { ExpiredToken, InvalidToken } from "@/types";
 
 export const sendVerification = async (email: string) => {
   try {
@@ -17,6 +21,37 @@ export const sendVerification = async (email: string) => {
     });
     return { success: true, errors: null };
   } catch (error) {
+    console.error(error);
+    return defaultError;
+  }
+};
+
+export const verifyOTPCode = async (email: string, otpCode: string) => {
+  try {
+    const validatedCode = otpSchema.safeParse({ otpCode });
+    if (!validatedCode.success) {
+      return {
+        success: false,
+        errors: formatZodErrors(validatedCode.error),
+      };
+    }
+
+    await verifyTokenOrThrow(email, otpCode, false);
+    return { success: true, errors: null };
+  } catch (error) {
+    switch (true) {
+      case error instanceof InvalidToken:
+        return {
+          success: false,
+          errors: [{ name: "otpCode", message: "Invalid code" }],
+        };
+      case error instanceof ExpiredToken:
+        return {
+          success: false,
+          errors: [{ name: "otpCode", message: "This code has expired" }],
+        };
+    }
+
     console.error(error);
     return defaultError;
   }

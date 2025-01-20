@@ -25,3 +25,19 @@ export const otpSchema = z.object({
   otpCode: z.string().min(6, "Enter code").max(6, "Invalid code"),
 });
 export type otpSchemaType = z.infer<typeof otpSchema>;
+
+/*  Reset Password Schema */
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Your password must contain 8 or more characters"),
+    confirmPassword: z
+      .string()
+      .min(8, "Your password must contain 8 or more characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+export type resetPasswordSchemaType = z.infer<typeof resetPasswordSchema>;

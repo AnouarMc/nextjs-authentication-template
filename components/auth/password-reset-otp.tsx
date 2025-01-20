@@ -1,10 +1,9 @@
 "use client";
 
 import AuthCard from "@/components/auth/auth-card";
-import { signInWithToken } from "@/actions/signin";
 import FormError from "@/components/auth/form-error";
+import { verifyOTPCode } from "@/actions/verification";
 import { useAuthContext } from "@/providers/auth-provider";
-import { useLoadingState } from "@/providers/loading-state-provider";
 import VerificationCountdown from "@/components/auth/verification-countdown";
 
 import {
@@ -26,10 +25,14 @@ import { Button } from "@/components/ui/button";
 import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
+const PasswordResetOTP = ({
+  onVerificationSuccess,
+  onBackLinkClicked,
+}: {
+  onVerificationSuccess: (otpCode: string) => void;
+  onBackLinkClicked: () => void;
+}) => {
   const { email } = useAuthContext();
-  const { isLoading, setIsLoading } = useLoadingState();
-
   const form = useForm<otpSchemaType>({
     resolver: zodResolver(otpSchema),
     defaultValues: {
@@ -39,23 +42,28 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
   const { isSubmitting, errors } = form.formState;
 
   const verifyEmail = form.handleSubmit(async ({ otpCode }) => {
-    setIsLoading(true);
-    const { success, errors } = await signInWithToken(email, otpCode);
-    if (!success) {
+    const { success, errors } = await verifyOTPCode(email, otpCode);
+    if (success) {
+      onVerificationSuccess(otpCode);
+    } else {
       errors?.forEach(({ name, message }) =>
         form.setError(name as keyof otpSchemaType, { message })
       );
     }
-    setIsLoading(false);
   });
 
   return (
     <AuthCard
-      title="Check your email"
+      title="Reset password"
+      subtitle="Enter the verification code sent to your email"
       showEmail
       footer={
-        <Button variant="link" type="button" onClick={onAlternatives}>
-          Use another method
+        <Button
+          variant="link"
+          onClick={onBackLinkClicked}
+          disabled={isSubmitting}
+        >
+          Back
         </Button>
       }
     >
@@ -73,7 +81,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
                       autoFocus
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
-                      disabled={isLoading}
+                      disabled={isSubmitting}
                       onComplete={verifyEmail}
                       {...field}
                     >
@@ -91,7 +99,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button className="w-full" type="submit" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>
@@ -99,4 +107,4 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
     </AuthCard>
   );
 };
-export default SignInOTP;
+export default PasswordResetOTP;

@@ -1,10 +1,15 @@
 import AuthCard from "@/components/auth/auth-card";
+import { sendVerification } from "@/actions/verification";
+import { useAuthContext } from "@/providers/auth-provider";
 import SignInSocial from "@/components/auth/sign-in-social";
 import SignInOTPButton from "@/components/auth/sign-in-otp-button";
+import { useLoadingState } from "@/providers/loading-state-provider";
 
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useLoadingState } from "@/providers/loading-state-provider";
+import { Loader2 } from "lucide-react";
 
 const SignInForgotPassword = ({
   onBackLinkClicked,
@@ -13,8 +18,20 @@ const SignInForgotPassword = ({
   onBackLinkClicked: () => void;
   onOTP: () => void;
 }) => {
-  const { isLoading } = useLoadingState();
+  const { isLoading, setIsLoading } = useLoadingState();
+  const { email } = useAuthContext();
+  const router = useRouter();
 
+  const sendOTP = async () => {
+    setIsLoading(true);
+    const { success, errors } = await sendVerification(email);
+    if (success) {
+      router.push("/sign-in/password-reset");
+    } else {
+      toast.error(errors?.[0].message);
+    }
+    setIsLoading(false);
+  };
   return (
     <AuthCard
       title="Forgot Password?"
@@ -24,8 +41,12 @@ const SignInForgotPassword = ({
         </Button>
       }
     >
-      <Button className="w-full" disabled={isLoading}>
-        Reset your password
+      <Button className="w-full" disabled={isLoading} onClick={sendOTP}>
+        {isLoading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          "Reset your password"
+        )}
       </Button>
       <div className="flex items-center gap-x-4 py-6">
         <Separator className="shrink" />
