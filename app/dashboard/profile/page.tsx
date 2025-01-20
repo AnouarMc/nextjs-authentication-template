@@ -1,7 +1,18 @@
-const Page = () => {
+import Profile from "@/components/dashboard/profile";
+
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
+const Page = async () => {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/sign-in");
+  }
+
   return (
-    <div>
-      <h1>Profile Page </h1>
+    <div className="space-y-6 ">
+      <Profile user={session.user} />
     </div>
   );
 };

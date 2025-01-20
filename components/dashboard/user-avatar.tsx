@@ -3,8 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const UserAvatar = ({ user, preview }: { user?: User; preview?: string }) => {
   return (
-    <Avatar className="h-8 w-8 rounded-lg">
+    <Avatar className="h-12 w-12 rounded-lg">
       <AvatarImage
+        className="rounded-full"
         src={preview ?? user?.image ?? undefined}
         alt={`${user?.name} profile picture`}
       />

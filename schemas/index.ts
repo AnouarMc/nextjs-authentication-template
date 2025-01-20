@@ -1,4 +1,5 @@
 import z from "zod";
+import { acceptedImageTypes, maxFileSize, maxFileSizeText } from "@/constants";
 
 /*  Sign Up Schema */
 export const signupSchema = z.object({
@@ -41,3 +42,22 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 export type resetPasswordSchemaType = z.infer<typeof resetPasswordSchema>;
+
+/*  Image Schema  */
+export const imageSchema = z.object({
+  image: z
+    .any()
+    .refine((files) => {
+      if (files?.[0]?.size === 0 || files?.[0] === undefined) return false;
+      else return true;
+    })
+    .refine(
+      (files) => acceptedImageTypes.includes(files?.[0]?.type),
+      "We only support PNG, GIF, or JPG pictures"
+    )
+    .refine(
+      (files) => files?.[0]?.size <= maxFileSize,
+      `Please upload a picture smaller than ${maxFileSizeText}`
+    ),
+});
+export type imageSchemaType = z.infer<typeof imageSchema>;
