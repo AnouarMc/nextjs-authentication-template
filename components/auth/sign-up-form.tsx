@@ -1,6 +1,6 @@
 "use client";
 
-import { initSignup } from "@/actions/signup";
+import { validateCreds } from "@/actions/signup";
 import AuthCard from "@/components/auth/auth-card";
 import FormError from "@/components/auth/form-error";
 import { useAuthContext } from "@/providers/auth-provider";
@@ -43,7 +43,7 @@ const SignUpForm = () => {
   const checkEmailAvailable = form.handleSubmit(
     async (credentials: signupSchemaType) => {
       setIsLoading(true);
-      const { success, errors } = await initSignup(credentials);
+      const { success, errors } = await validateCreds(credentials);
       if (success) {
         setEmail(form.getValues("email"));
         setPassword(form.getValues("password"));

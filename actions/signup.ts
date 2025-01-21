@@ -7,6 +7,8 @@ import { getAccountByEmail } from "@/data/account";
 import { verifyTokenOrThrow } from "@/data/verification";
 
 import {
+  emailSchema,
+  emailSchemaType,
   otpSchema,
   otpSchemaType,
   signupSchema,
@@ -16,9 +18,13 @@ import { signIn } from "@/auth";
 import { ExpiredToken, InvalidToken } from "@/types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
-export const initSignup = async (creds: signupSchemaType) => {
+export const validateCreds = async (
+  creds: signupSchemaType | emailSchemaType
+) => {
   try {
-    const validatedCreds = signupSchema.safeParse(creds);
+    let validatedCreds = null;
+    const schema = "password" in creds ? signupSchema : emailSchema;
+    validatedCreds = schema.safeParse(creds);
     if (!validatedCreds.success) {
       return {
         success: false,

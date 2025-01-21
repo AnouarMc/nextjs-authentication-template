@@ -1,5 +1,10 @@
+import { validateCreds } from "@/actions/signup";
 import FormError from "@/components/auth/form-error";
+import { addAccount } from "@/actions/manage-account";
 import DashboardCard from "@/components/dashboard/dashboard-card";
+import LoadingStateProvider from "@/providers/loading-state-provider";
+import AuthProvider, { useAuthContext } from "@/providers/auth-provider";
+import VerificationCountdown from "@/components/auth/verification-countdown";
 
 import {
   Form,
@@ -9,30 +14,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
-import { Loader2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import {
   emailSchema,
   emailSchemaType,
   otpSchema,
   otpSchemaType,
 } from "@/schemas";
-import { Input } from "../ui/input";
-import VerificationCountdown from "../auth/verification-countdown";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Loader2, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import AuthProvider from "@/providers/auth-provider";
-import LoadingStateProvider from "@/providers/loading-state-provider";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Content = () => {
   const [step, setStep] = useState<"link" | "email" | "verification">("link");
+  const { email, setEmail } = useAuthContext();
 
   const emailForm = useForm<emailSchemaType>({
     resolver: zodResolver(emailSchema),
@@ -43,9 +46,16 @@ const Content = () => {
   const { isSubmitting: emailIsSubmitting, errors: emailErrors } =
     emailForm.formState;
   const checkEmailExist = emailForm.handleSubmit(
-    async (email: emailSchemaType) => {
-      console.log(email);
-      setStep("verification");
+    async (emailSchema: emailSchemaType) => {
+      const { success, errors } = await validateCreds(emailSchema);
+      if (success) {
+        setEmail(emailSchema.email);
+        setStep("verification");
+      } else {
+        errors?.forEach(({ name, message }) => {
+          emailForm.setError(name as keyof emailSchemaType, { message });
+        });
+      }
     }
   );
 
@@ -59,7 +69,14 @@ const Content = () => {
     otpForm.formState;
 
   const verifyEmail = otpForm.handleSubmit(async (otpCode: otpSchemaType) => {
-    console.log(otpCode);
+    const { success, errors } = await addAccount(email, otpCode);
+    if (success) {
+      setStep("link");
+    } else {
+      errors?.forEach(({ name, message }) =>
+        otpForm.setError(name as keyof otpSchemaType, { message })
+      );
+    }
   });
 
   switch (true) {
@@ -130,9 +147,7 @@ const Content = () => {
       return (
         <DashboardCard
           title="Verify email address"
-          subtitle={`Enter the verification code sent to ${emailForm.getValues(
-            "email"
-          )}`}
+          subtitle={`Enter the verification code sent to ${email}`}
         >
           <div className="text-center">
             <Form {...otpForm}>

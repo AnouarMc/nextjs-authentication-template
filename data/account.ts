@@ -51,3 +51,15 @@ export const getAccountsByUserId = async (userId: string) => {
   `;
   return result;
 };
+
+export const createAccount = async (userId: string, email: string) => {
+  await db.account.create({
+    data: {
+      userId,
+      email: email,
+      type: "email",
+      provider: "email",
+      providerAccountId: email,
+    },
+  });
+};

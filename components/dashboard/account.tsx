@@ -1,3 +1,8 @@
+import {
+  removeAccount,
+  revalidateDashboard,
+  setEmailAsPrimary,
+} from "@/actions/manage-account";
 import FormError from "@/components/auth/form-error";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 
@@ -7,6 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { useState } from "react";
 import { AccountCustomProps } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -24,11 +30,23 @@ const Account = ({
 
   const onRemove = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const { success, errors } = await removeAccount(email);
+    if (success) {
+      if (isPrimary) await revalidateDashboard();
+    } else {
+      setError(errors?.[0].message);
+    }
     setIsSubmitting(false);
   };
 
-  const updatePrimaryEmail = async () => {};
+  const updatePrimaryEmail = async () => {
+    const { success, errors } = await setEmailAsPrimary(email);
+    if (success) {
+      await revalidateDashboard();
+    } else {
+      toast.error(errors?.[0].message);
+    }
+  };
 
   return (
     <>
