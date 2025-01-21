@@ -34,7 +34,7 @@ const Account = ({
 
   return (
     <div>
-      <div className="flex items-center gap-x-2" key={provider}>
+      <div className="flex items-center gap-x-2">
         <div className="w-4 shrink-0">
           {providers.find((item) => item.provider === provider)?.icon}
         </div>

@@ -18,7 +18,10 @@ const ConnectedAccounts = ({
       </div>
       <div className="grow overflow-hidden">
         {accounts.map((account) => (
-          <ConnectedAccount key={account.provider} account={account} />
+          <ConnectedAccount
+            key={`${account.provider}${account.email}`}
+            account={account}
+          />
         ))}
 
         <AddConnectedAccount connectedAccounts={accounts} />

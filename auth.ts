@@ -20,7 +20,7 @@ export const {
   signOut,
   unstable_update: updateServerSession,
 } = NextAuth({
-  adapter: PrismaAdapter(db),
+  adapter: CustomPrismaAdapter(db),
   session: { strategy: "jwt" },
   providers: [
     Google({
@@ -112,3 +112,17 @@ export const {
     },
   },
 });
+
+function CustomPrismaAdapter(prisma: typeof db) {
+  return {
+    ...PrismaAdapter(prisma),
+    getUserByEmail: async (email: string) => {
+      const account = await prisma.account.findFirst({
+        where: { email },
+        select: { user: true },
+      });
+      if (account?.user) account.user.email = email;
+      return account?.user ?? null;
+    },
+  };
+}
