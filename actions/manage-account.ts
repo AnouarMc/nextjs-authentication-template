@@ -4,6 +4,8 @@ import {
   updateUserName,
   updateUserImage,
   updatePrimaryEmail,
+  updateUserPassword,
+  getUserById,
 } from "@/data/user";
 import {
   createAccount,
@@ -13,11 +15,16 @@ import {
 import { verifyTokenOrThrow } from "@/data/verification";
 
 import {
-  imageSchema,
-  imageSchemaType,
   otpSchema,
   otpSchemaType,
+  imageSchema,
+  imageSchemaType,
+  resetPasswordSchema,
+  resetPasswordSchemaType,
+  updatePasswordSchema,
+  updatePasswordSchemaType,
 } from "@/schemas";
+import bcrypt from "bcrypt";
 import { defaultError } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { formatZodErrors } from "@/lib/utils";
@@ -166,6 +173,59 @@ export const setEmailAsPrimary = async (email: string) => {
     }
     await updateServerSession({ user: { email } });
     return { success, errors: null };
+  } catch (error) {
+    console.error(error);
+    return defaultError;
+  }
+};
+
+export const changePassword = async (
+  values: updatePasswordSchemaType | resetPasswordSchemaType
+) => {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) {
+      return defaultError;
+    }
+    const schema =
+      "currentPassword" in values ? updatePasswordSchema : resetPasswordSchema;
+
+    const validatedPasswords = schema.safeParse(values);
+    if (!validatedPasswords.success) {
+      return {
+        success: false,
+        errors: formatZodErrors(validatedPasswords.error),
+      };
+    }
+
+    const { currentPassword, password: newPassword } =
+      validatedPasswords.data as updatePasswordSchemaType;
+    const userRecord = await getUserById(userId);
+
+    if (userRecord?.password) {
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        userRecord?.password
+      );
+      if (!passwordMatch) {
+        return {
+          success: false,
+          errors: [
+            { name: "currentPassword", message: "Password is incorrect" },
+          ],
+        };
+      }
+    }
+
+    if (!userRecord?.email) {
+      return defaultError;
+    }
+    await updateUserPassword(userRecord.email, newPassword);
+
+    if (!currentPassword)
+      await updateServerSession({ user: { hasPassword: true } });
+    return { success: true, errors: null };
   } catch (error) {
     console.error(error);
     return defaultError;

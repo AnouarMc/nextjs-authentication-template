@@ -91,8 +91,9 @@ export const {
     },
 
     async session({ session, token }) {
-      session.user.id = token.sub as string;
+      session.user.id = token.id as string;
       session.user.image = token.image as string;
+      session.user.hasPassword = token.hasPassword ?? token.password !== null;
       return session;
     },
   },

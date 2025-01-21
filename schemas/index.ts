@@ -27,7 +27,7 @@ export const otpSchema = z.object({
 });
 export type otpSchemaType = z.infer<typeof otpSchema>;
 
-/*  Reset Password Schema */
+/*  Reset Password Schema  */
 export const resetPasswordSchema = z
   .object({
     password: z
@@ -42,6 +42,23 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 export type resetPasswordSchemaType = z.infer<typeof resetPasswordSchema>;
+
+/*  Update Password Schema  */
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter password"),
+    password: z
+      .string()
+      .min(8, "Your password must contain 8 or more characters"),
+    confirmPassword: z
+      .string()
+      .min(8, "Your password must contain 8 or more characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+export type updatePasswordSchemaType = z.infer<typeof updatePasswordSchema>;
 
 /*  Image Schema  */
 export const imageSchema = z.object({

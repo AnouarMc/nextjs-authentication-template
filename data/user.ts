@@ -71,3 +71,9 @@ export const updatePrimaryEmail = async (userId: string, email: string) => {
 
   return { success: true, errors: null };
 };
+
+export const getUserById = async (userId: string) => {
+  return await db.user.findUnique({
+    where: { id: userId },
+  });
+};
