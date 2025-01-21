@@ -2,6 +2,7 @@ import "server-only";
 
 import { db } from "@/data/db";
 import { AccountCustomProps } from "@/types";
+import { updateServerSession } from "@/auth";
 
 export const getAccountByEmail = async (email: string) => {
   return await db.account.findFirst({
@@ -62,4 +63,108 @@ export const createAccount = async (userId: string, email: string) => {
       providerAccountId: email,
     },
   });
+};
+
+export const deleteAccount = async (userId: string, email: string) => {
+  const accounts = await getAccountsByUserId(userId);
+  const connectedAccount = accounts.find(
+    (account) => account.provider !== "email" && account.email === email
+  );
+
+  if (connectedAccount) {
+    return {
+      success: false,
+      errors: [
+        {
+          name: "root",
+          message:
+            "This email address is linked to a Connected Account, remove the Connected Account before deleting this email address",
+        },
+      ],
+    };
+  }
+
+  const distinctEmails = Array.from(
+    new Map(accounts.map((account) => [account.email, account])).values()
+  );
+  if (distinctEmails.length <= 1) {
+    return {
+      success: false,
+      errors: [
+        {
+          name: "root",
+          message: "Cannot delete the email as no replacement is present",
+        },
+      ],
+    };
+  }
+
+  await db.$transaction(async (prisma) => {
+    await prisma.account.delete({
+      where: {
+        userId_email_provider: {
+          userId,
+          email,
+          provider: "email",
+        },
+      },
+    });
+
+    const deletedAccount = distinctEmails.find(
+      (account) => account.email === email
+    );
+    if (deletedAccount?.isPrimary) {
+      const otherEmail = distinctEmails.find(
+        (account) => account.email !== email
+      );
+      await prisma.user.update({
+        where: { id: userId },
+        data: { email: otherEmail?.email },
+      });
+      await updateServerSession({ user: { email: otherEmail?.email } });
+    }
+  });
+
+  return { success: true };
+};
+
+export const deleteConnectedAccount = async (
+  userId: string,
+  email: string,
+  provider: string
+) => {
+  await db.$transaction(async (prisma) => {
+    await prisma.account.delete({
+      where: {
+        userId_email_provider: {
+          userId,
+          email,
+          provider,
+        },
+      },
+    });
+
+    const account = await prisma.account.findUnique({
+      where: {
+        userId_email_provider: {
+          userId,
+          email,
+          provider: "email",
+        },
+      },
+    });
+
+    if (!account) {
+      await prisma.account.create({
+        data: {
+          userId,
+          email: email,
+          type: "email",
+          provider: "email",
+          providerAccountId: email,
+        },
+      });
+    }
+  });
+  return { success: true, errors: null };
 };

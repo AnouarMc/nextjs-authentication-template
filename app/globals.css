@@ -88,6 +88,11 @@ body {
 }
 
 @layer utilities {
+  .popover-content-width-same-as-its-trigger {
+    width: var(--radix-dropdown-menu-trigger-width);
+    max-height: var(--radix-popover-content-available-height);
+  }
+
   .scroll-area {
     overflow: hidden auto;
   }

@@ -1,12 +1,15 @@
 "use server";
 
 import {
-  deleteAccount,
   updateUserName,
   updateUserImage,
   updatePrimaryEmail,
 } from "@/data/user";
-import { createAccount } from "@/data/account";
+import {
+  createAccount,
+  deleteAccount,
+  deleteConnectedAccount,
+} from "@/data/account";
 import { verifyTokenOrThrow } from "@/data/verification";
 
 import {
@@ -126,7 +129,7 @@ export const addAccount = async (email: string, code: otpSchemaType) => {
   }
 };
 
-export const removeAccount = async (email: string) => {
+export const removeAccount = async (email: string, provider?: string) => {
   try {
     const session = await auth();
     const userId = session?.user?.id;
@@ -135,7 +138,9 @@ export const removeAccount = async (email: string) => {
       return defaultError;
     }
 
-    const { success, errors } = await deleteAccount(userId, email);
+    const { success, errors } = provider
+      ? await deleteConnectedAccount(userId, email, provider)
+      : await deleteAccount(userId, email);
     if (success) revalidatePath("/dashboard/profile");
     return {
       success,

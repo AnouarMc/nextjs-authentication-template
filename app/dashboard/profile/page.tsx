@@ -1,6 +1,7 @@
 import { getAccountsByUserId } from "@/data/account";
 import Profile from "@/components/dashboard/profile";
 import Accounts from "@/components/dashboard/accounts";
+import ConnectedAccounts from "@/components/dashboard/connected-accounts";
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
@@ -17,12 +18,17 @@ const Page = async () => {
   const distinctEmails = Array.from(
     new Map(accounts.map((account) => [account.email, account])).values()
   );
+  const connectedAccounts = accounts.filter(
+    (account) => account.provider !== "email"
+  );
 
   return (
     <div className="space-y-6 ">
       <Profile user={session.user} />
       <Separator />
       <Accounts accounts={distinctEmails} />
+      <Separator />
+      <ConnectedAccounts accounts={connectedAccounts} />
     </div>
   );
 };

@@ -1,3 +1,7 @@
+import { createElement } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa6";
+
 export const publicRoutes = ["/"];
 export const authApiPrefix = "/api/auth/";
 export const authRoutesPrefixes = ["/sign-in", "/sign-up"];
@@ -17,4 +21,17 @@ export const acceptedImageTypes = [
   "image/gif",
   "image/jpeg",
   "image/jpg",
+];
+
+export const providers = [
+  {
+    provider: "github" as const,
+    name: "GitHub",
+    icon: createElement(FaGithub),
+  },
+  {
+    provider: "google" as const,
+    name: "Google",
+    icon: createElement(FcGoogle),
+  },
 ];

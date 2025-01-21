@@ -2,15 +2,9 @@ import { useLoadingState } from "@/providers/loading-state-provider";
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { providers } from "@/constants";
 import { signIn } from "next-auth/react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
-
-export const providers = [
-  { provider: "github" as const, name: "GitHub", icon: <FaGithub /> },
-  { provider: "google" as const, name: "Google", icon: <FcGoogle /> },
-];
 
 const SignInSocial = () => {
   const { isLoading, setIsLoading } = useLoadingState();
