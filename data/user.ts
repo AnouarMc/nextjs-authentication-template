@@ -77,3 +77,11 @@ export const getUserById = async (userId: string) => {
     where: { id: userId },
   });
 };
+
+export const deleteUser = async (userId: string) => {
+  await db.user.delete({
+    where: {
+      id: userId,
+    },
+  });
+};

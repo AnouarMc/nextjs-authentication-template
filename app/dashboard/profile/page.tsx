@@ -23,7 +23,7 @@ const Page = async () => {
   );
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       <Profile user={session.user} />
       <Separator />
       <Accounts accounts={distinctEmails} />

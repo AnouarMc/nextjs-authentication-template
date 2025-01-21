@@ -1,5 +1,6 @@
 "use client";
 
+import { logOut } from "@/actions/manage-account";
 import UserAvatar from "@/components/dashboard/user-avatar";
 
 import {
@@ -56,7 +57,11 @@ const SidebarUser = ({ user }: { user?: User }) => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                await logOut();
+              }}
+            >
               <LogOut />
               <span>Log out</span>
             </DropdownMenuItem>

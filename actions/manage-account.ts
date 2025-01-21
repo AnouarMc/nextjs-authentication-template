@@ -6,6 +6,7 @@ import {
   updatePrimaryEmail,
   updateUserPassword,
   getUserById,
+  deleteUser,
 } from "@/data/user";
 import {
   createAccount,
@@ -28,7 +29,7 @@ import bcrypt from "bcrypt";
 import { defaultError } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { formatZodErrors } from "@/lib/utils";
-import { auth, updateServerSession } from "@/auth";
+import { auth, signOut, updateServerSession } from "@/auth";
 import { ExpiredToken, InvalidToken } from "@/types";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
@@ -230,4 +231,24 @@ export const changePassword = async (
     console.error(error);
     return defaultError;
   }
+};
+
+export const removeUser = async () => {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) {
+      return defaultError;
+    }
+
+    await deleteUser(userId);
+    return { success: true, errors: null };
+  } catch (error) {
+    console.error(error);
+    return defaultError;
+  }
+};
+
+export const logOut = async () => {
+  await signOut();
 };
