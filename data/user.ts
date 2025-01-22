@@ -13,6 +13,7 @@ export const createUserAndAccount = async (email: string, password: string) => {
       email,
       password: hashed,
       emailVerified: new Date(),
+      twoFactorEnabled: false,
       accounts: {
         create: [
           {
@@ -83,5 +84,27 @@ export const deleteUser = async (userId: string) => {
     where: {
       id: userId,
     },
+  });
+};
+
+export const enableTwoFactor = async (userId: string, secret: string) => {
+  await db.user.update({
+    data: {
+      twoFactorEnabled: true,
+      twoFactorSecret: secret,
+    },
+    where: {
+      id: userId,
+    },
+  });
+};
+
+export const disableTwoFactor = async (userId: string) => {
+  await db.user.update({
+    data: {
+      twoFactorEnabled: false,
+      twoFactorSecret: null,
+    },
+    where: { id: userId },
   });
 };

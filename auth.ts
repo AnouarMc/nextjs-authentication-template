@@ -7,6 +7,8 @@ import { getAccountAndUser, updateAccountEmail } from "@/data/account";
 
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
+import { User } from "@prisma/client";
+import { Adapter } from "@auth/core/adapters";
 import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -20,7 +22,7 @@ export const {
   signOut,
   unstable_update: updateServerSession,
 } = NextAuth({
-  adapter: CustomPrismaAdapter(db),
+  adapter: CustomPrismaAdapter(db) as Adapter,
   session: { strategy: "jwt" },
   providers: [
     Google({
@@ -85,15 +87,18 @@ export const {
         return { ...token, ...session.user };
       }
       if (user) {
-        token = { ...token, ...user };
+        const { twoFactorEnabled } = user;
+        const hasPassword = user.password !== null;
+        token = { ...token, twoFactorEnabled, hasPassword };
       }
       return token;
     },
 
     async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.image = token.image as string;
-      session.user.hasPassword = token.hasPassword ?? token.password !== null;
+      session.user.id = token.sub;
+      session.user.image = token.image;
+      session.user.hasPassword = token.hasPassword;
+      session.user.twoFactorEnabled = token.twoFactorEnabled;
       return session;
     },
   },
@@ -124,6 +129,18 @@ function CustomPrismaAdapter(prisma: typeof db) {
       });
       if (account?.user) account.user.email = email;
       return account?.user ?? null;
+    },
+
+    createUser: ({ name, email, emailVerified, image }: User) => {
+      return prisma.user.create({
+        data: {
+          name,
+          email,
+          emailVerified,
+          image,
+          twoFactorEnabled: false,
+        },
+      });
     },
   };
 }
