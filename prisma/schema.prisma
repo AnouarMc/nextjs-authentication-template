@@ -23,6 +23,7 @@ model User {
   image            String?
   twoFactorEnabled Boolean
   twoFactorSecret  String?
+  backupCodes      String?
   accounts         Account[]
 
   createdAt DateTime @default(now())

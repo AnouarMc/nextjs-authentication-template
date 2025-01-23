@@ -1,12 +1,15 @@
 "use server";
 
+import { updateBackupCodes } from "@/data/two-factor";
+import { generateBackupCodes } from "@/lib/two-factor";
+import { disableTwoFactor, enableTwoFactor } from "@/data/two-factor";
+
 import QRCode from "qrcode";
-import { auth, updateServerSession } from "@/auth";
 import speakeasy from "speakeasy";
 import { defaultError } from "@/constants";
-import { otpSchema, otpSchemaType } from "@/schemas";
 import { formatZodErrors } from "@/lib/utils";
-import { disableTwoFactor, enableTwoFactor } from "@/data/user";
+import { auth, updateServerSession } from "@/auth";
+import { otpSchema, otpSchemaType } from "@/schemas";
 
 export const getQrCode = async () => {
   try {
@@ -27,11 +30,10 @@ export const getQrCode = async () => {
 
 export const verifyQrCode = async (otpCode: otpSchemaType, secret: string) => {
   try {
-    console.log(otpCode, secret);
     const session = await auth();
     const userId = session?.user?.id;
     if (!userId) {
-      return defaultError;
+      return { ...defaultError, backupCodes: null };
     }
 
     const validatedCode = otpSchema.safeParse(otpCode);
@@ -39,6 +41,7 @@ export const verifyQrCode = async (otpCode: otpSchemaType, secret: string) => {
       return {
         success: false,
         errors: formatZodErrors(validatedCode.error),
+        backupCodes: null,
       };
     }
 
@@ -49,18 +52,19 @@ export const verifyQrCode = async (otpCode: otpSchemaType, secret: string) => {
     });
 
     if (success) {
-      await enableTwoFactor(userId, secret);
+      const backupCodes = await enableTwoFactor(userId, secret);
       await updateServerSession({ user: { twoFactorEnabled: true } });
-      return { success, errors: null };
+      return { success, errors: null, backupCodes };
     }
 
     return {
       success: false,
       errors: [{ name: "otpCode", message: "Invalid code" }],
+      backupCodes: null,
     };
   } catch (error) {
     console.error(error);
-    return defaultError;
+    return { ...defaultError, backupCodes: null };
   }
 };
 
@@ -78,5 +82,23 @@ export const removeTwoFactor = async () => {
   } catch (error) {
     console.error(error);
     return defaultError;
+  }
+};
+
+export const regenerateBackupCodes = async () => {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) {
+      return { ...defaultError, backupCodes: null };
+    }
+
+    const { backupCodes, encrypted } = generateBackupCodes();
+    await updateBackupCodes(userId, encrypted);
+
+    return { success: true, errors: null, backupCodes };
+  } catch (error) {
+    console.error(error);
+    return { ...defaultError, backupCodes: null };
   }
 };

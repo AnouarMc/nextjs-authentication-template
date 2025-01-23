@@ -15,19 +15,23 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { otpSchema, otpSchemaType } from "@/schemas";
 import { Loader2, Plus } from "lucide-react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
+import { otpSchema, otpSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getQrCode, verifyQrCode } from "@/actions/two-factor";
-import { toast } from "sonner";
 import { revalidateDashboard } from "@/actions/manage-account";
 
-const AddTwoFactor = () => {
+const AddTwoFactor = ({
+  onSuccess,
+}: {
+  onSuccess: (codes: string[]) => void;
+}) => {
   const [step, setStep] = useState<"link" | "qr" | "verification">("link");
   const [qrCode, setQrCode] = useState({
     data: "",
@@ -53,9 +57,13 @@ const AddTwoFactor = () => {
   };
 
   const verifyTwoFactorCode = form.handleSubmit(async (otpCode) => {
-    const { success, errors } = await verifyQrCode(otpCode, qrCode.secret);
-    if (success) {
+    const { success, errors, backupCodes } = await verifyQrCode(
+      otpCode,
+      qrCode.secret
+    );
+    if (success && backupCodes !== null) {
       setStep("link");
+      onSuccess(backupCodes);
       await revalidateDashboard();
     } else {
       errors?.forEach(({ name, message }) =>

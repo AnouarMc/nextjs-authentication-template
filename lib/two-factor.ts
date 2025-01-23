@@ -1,8 +1,11 @@
 import "server-only";
 
+import { encrypt } from "@/lib/encryption";
+
 import speakeasy from "speakeasy";
 import { InvalidJWT } from "@/types";
 import { cookies } from "next/headers";
+import { webcrypto } from "node:crypto";
 import { SignJWT, jwtVerify } from "jose";
 import { TWO_FACTOR_COOKIE_NAME } from "@/constants";
 
@@ -51,4 +54,31 @@ export const verifyTOTP = (code: string, secret: string) => {
     encoding: "base32",
   });
   return { success };
+};
+
+export const generateBackupCodes = () => {
+  const backupCodes = Array.from({ length: 10 })
+    .fill(null)
+    .map(() => generateString());
+  const encrypted = encrypt(JSON.stringify(backupCodes));
+  return {
+    backupCodes,
+    encrypted,
+  };
+};
+
+const generateString = () => {
+  const length = 8;
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const charsLength = chars.length;
+
+  const charArray = new Uint8Array(length);
+  webcrypto.getRandomValues(charArray);
+
+  let code = "";
+  for (let i = 0; i < length; i++) {
+    const index = charArray[i] % charsLength;
+    code += chars[index];
+  }
+  return code;
 };

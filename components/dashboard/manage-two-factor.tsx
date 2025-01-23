@@ -1,13 +1,18 @@
 "use client";
 
+import BackupCodes from "@/components/dashboard/backup-codes";
 import AddTwoFactor from "@/components/dashboard/add-two-factor";
 import RemoveTwoFactor from "@/components/dashboard/remove-two-factor";
+
+import { useState } from "react";
 
 const ManageTwoFactor = ({
   twoFactorEnabled,
 }: {
   twoFactorEnabled: boolean;
 }) => {
+  const [firstTimeBackups, setFirstTimeBackups] = useState<string[]>([]);
+
   return (
     <div className="max-w-screen-sm flex flex-col md:flex-row mt-2">
       <div className="mb-4 md:mb-0">
@@ -17,7 +22,16 @@ const ManageTwoFactor = ({
       </div>
 
       <div className="grow overflow-hidden">
-        {twoFactorEnabled ? <RemoveTwoFactor /> : <AddTwoFactor />}
+        {twoFactorEnabled ? (
+          <>
+            <RemoveTwoFactor />
+            <BackupCodes firstTimeBackups={firstTimeBackups} />
+          </>
+        ) : (
+          <AddTwoFactor
+            onSuccess={(backupCodes) => setFirstTimeBackups(backupCodes)}
+          />
+        )}
       </div>
     </div>
   );
