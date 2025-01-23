@@ -6,6 +6,9 @@ export class ExpiredToken extends AuthError {
 export class InvalidToken extends AuthError {
   static type = "InvalidToken";
 }
+export class InvalidJWT extends AuthError {
+  static type = "InvalidJWT";
+}
 
 export interface AccountCustomProps {
   email: string;

@@ -2,8 +2,14 @@ import { db } from "@/data/db";
 import { sendEmail } from "@/lib/email";
 import { tokenTTLInSeconds } from "@/constants";
 import { verifyTokenOrThrow } from "@/data/verification";
-import { updateUserImage, updateUserName } from "@/data/user";
 import { getAccountAndUser, updateAccountEmail } from "@/data/account";
+import { getUserById, updateUserImage, updateUserName } from "@/data/user";
+import {
+  getTwoFactorCookie,
+  removeTwoFactorCookie,
+  setTwoFactorCookie,
+  verifyTOTP,
+} from "@/lib/two-factor";
 
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
@@ -14,6 +20,7 @@ import Github from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { InvalidJWT, InvalidToken } from "./types";
 
 export const {
   handlers,
@@ -67,6 +74,28 @@ export const {
         return user;
       },
     }),
+    Credentials({
+      id: "TwoFactor",
+      async authorize({ otpCode }) {
+        const userId = (await getTwoFactorCookie()) as string;
+        const user = await getUserById(userId);
+        if (!user) {
+          await removeTwoFactorCookie();
+          throw new InvalidJWT();
+        }
+
+        const { success } = verifyTOTP(
+          otpCode as string,
+          user.twoFactorSecret!
+        );
+        if (!success) {
+          throw new InvalidToken();
+        }
+
+        await removeTwoFactorCookie();
+        return { ...user, twoFactorPassed: true };
+      },
+    }),
     {
       id: "verification",
       name: "verification",
@@ -82,6 +111,17 @@ export const {
     },
   ],
   callbacks: {
+    async signIn({ user, email }) {
+      if (email?.verificationRequest) return true;
+      const session = await auth();
+      if (session) return true;
+
+      if (user.twoFactorEnabled && !user.twoFactorPassed) {
+        await setTwoFactorCookie(user.id!);
+        return "/sign-in/two-factor";
+      }
+      return true;
+    },
     async jwt({ token, session, trigger, user }) {
       if (trigger === "update") {
         return { ...token, ...session.user };

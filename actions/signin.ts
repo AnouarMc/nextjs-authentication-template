@@ -7,6 +7,7 @@ import {
   emailSchema,
   emailSchemaType,
   otpSchema,
+  otpSchemaType,
   signupSchema,
   signupSchemaType,
 } from "@/schemas";
@@ -14,8 +15,8 @@ import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import { CredentialsSignin } from "next-auth";
 import { defaultError, redirectUrl } from "@/constants";
+import { ExpiredToken, InvalidJWT, InvalidToken } from "@/types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { ExpiredToken, InvalidToken } from "@/types";
 
 export const checkEmail = async (email: emailSchemaType) => {
   try {
@@ -136,6 +137,42 @@ export const signInWithToken = async (email: string, otpCode: string) => {
         return {
           success: false,
           errors: [{ name: "otpCode", message: "This code has expired" }],
+        };
+    }
+
+    console.error(error);
+    return defaultError;
+  }
+};
+
+export const signInWithTwoFactor = async (code: otpSchemaType) => {
+  try {
+    const validatedCode = otpSchema.safeParse(code);
+    if (!validatedCode.success) {
+      return {
+        success: false,
+        errors: formatZodErrors(validatedCode.error),
+      };
+    }
+
+    const { otpCode } = validatedCode.data;
+    await signIn("TwoFactor", {
+      otpCode,
+      redirectTo: redirectUrl,
+    });
+    return { success: true, errors: null };
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    switch (true) {
+      case error instanceof InvalidJWT:
+        redirect("/sign-in");
+      case error instanceof InvalidToken:
+        return {
+          success: false,
+          errors: [{ name: "otpCode", message: "Invalid code" }],
         };
     }
 

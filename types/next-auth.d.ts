@@ -5,6 +5,7 @@ declare module "next-auth" {
     password?: string | null;
     hasPassword?: boolean;
     twoFactorEnabled: boolean;
+    twoFactorPassed?: boolean;
   }
 }
 

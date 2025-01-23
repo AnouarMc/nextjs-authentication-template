@@ -8,6 +8,7 @@ export const authRoutesPrefixes = ["/sign-in", "/sign-up"];
 export const redirectUrl = "/dashboard/profile";
 
 export const tokenTTLInSeconds = 5 * 60;
+export const TWO_FACTOR_COOKIE_NAME = "two_factor";
 
 export const defaultError = {
   success: false,
