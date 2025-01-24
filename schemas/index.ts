@@ -27,6 +27,12 @@ export const otpSchema = z.object({
 });
 export type otpSchemaType = z.infer<typeof otpSchema>;
 
+/*  Backup Code Schema */
+export const backupCodeSchema = z.object({
+  otpCode: z.string().min(8, "Invalid code").max(8, "Invalid code"),
+});
+export type backupCodeSchemaType = z.infer<typeof backupCodeSchema>;
+
 /*  Reset Password Schema  */
 export const resetPasswordSchema = z
   .object({

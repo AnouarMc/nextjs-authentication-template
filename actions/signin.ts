@@ -4,11 +4,11 @@ import { formatZodErrors } from "@/lib/utils";
 import { getAccountAndUser } from "@/data/account";
 
 import {
-  emailSchema,
-  emailSchemaType,
   otpSchema,
-  otpSchemaType,
+  emailSchema,
   signupSchema,
+  emailSchemaType,
+  backupCodeSchema,
   signupSchemaType,
 } from "@/schemas";
 import { signIn } from "@/auth";
@@ -145,9 +145,13 @@ export const signInWithToken = async (email: string, otpCode: string) => {
   }
 };
 
-export const signInWithTwoFactor = async (code: otpSchemaType) => {
+export const signInWithTwoFactor = async (
+  code: string,
+  method: "app" | "backup-code"
+) => {
   try {
-    const validatedCode = otpSchema.safeParse(code);
+    const schema = method === "app" ? otpSchema : backupCodeSchema;
+    const validatedCode = schema.safeParse({ otpCode: code });
     if (!validatedCode.success) {
       return {
         success: false,
@@ -155,11 +159,12 @@ export const signInWithTwoFactor = async (code: otpSchemaType) => {
       };
     }
 
-    const { otpCode } = validatedCode.data;
     await signIn("TwoFactor", {
-      otpCode,
+      code,
+      method,
       redirectTo: redirectUrl,
     });
+
     return { success: true, errors: null };
   } catch (error) {
     if (isRedirectError(error)) {

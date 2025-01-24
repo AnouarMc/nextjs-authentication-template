@@ -1,6 +1,6 @@
 import "server-only";
 
-import { encrypt } from "@/lib/encryption";
+import { decrypt, encrypt } from "@/lib/encryption";
 
 import speakeasy from "speakeasy";
 import { InvalidJWT } from "@/types";
@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { webcrypto } from "node:crypto";
 import { SignJWT, jwtVerify } from "jose";
 import { TWO_FACTOR_COOKIE_NAME } from "@/constants";
+import { updateBackupCodes } from "@/data/two-factor";
 
 const secretKey = process.env.AUTH_SECRET;
 const secret = new TextEncoder().encode(secretKey);
@@ -47,13 +48,27 @@ export const removeTwoFactorCookie = async () => {
   cookieStore.delete(TWO_FACTOR_COOKIE_NAME);
 };
 
-export const verifyTOTP = (code: string, secret: string) => {
+export const verifyTotp = (code: string, secret: string) => {
   const success = speakeasy.totp.verify({
     token: code,
     secret: secret,
     encoding: "base32",
   });
   return { success };
+};
+
+export const verifyBackupCode = async (
+  userId: string,
+  code: string,
+  backupCodes: string
+) => {
+  let decrypted = JSON.parse(decrypt(backupCodes));
+  if (decrypted.includes(code)) {
+    decrypted = decrypted.filter((backupCode: string) => backupCode !== code);
+    await updateBackupCodes(userId, encrypt(JSON.stringify(decrypted)));
+    return { success: true };
+  }
+  return { success: false };
 };
 
 export const generateBackupCodes = () => {

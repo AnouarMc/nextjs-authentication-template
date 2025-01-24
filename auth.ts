@@ -1,15 +1,16 @@
 import { db } from "@/data/db";
+import {
+  verifyTotp,
+  verifyBackupCode,
+  getTwoFactorCookie,
+  setTwoFactorCookie,
+  removeTwoFactorCookie,
+} from "@/lib/two-factor";
 import { sendEmail } from "@/lib/email";
 import { tokenTTLInSeconds } from "@/constants";
 import { verifyTokenOrThrow } from "@/data/verification";
 import { getAccountAndUser, updateAccountEmail } from "@/data/account";
 import { getUserById, updateUserImage, updateUserName } from "@/data/user";
-import {
-  getTwoFactorCookie,
-  removeTwoFactorCookie,
-  setTwoFactorCookie,
-  verifyTOTP,
-} from "@/lib/two-factor";
 
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
@@ -17,10 +18,10 @@ import { User } from "@prisma/client";
 import { Adapter } from "@auth/core/adapters";
 import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
+import { InvalidJWT, InvalidToken } from "@/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { InvalidJWT, InvalidToken } from "./types";
 
 export const {
   handlers,
@@ -76,20 +77,26 @@ export const {
     }),
     Credentials({
       id: "TwoFactor",
-      async authorize({ otpCode }) {
+      async authorize({ code, method }) {
         const userId = (await getTwoFactorCookie()) as string;
         const user = await getUserById(userId);
-        if (!user) {
+        if (!user || !user.backupCodes || !user.twoFactorSecret) {
           await removeTwoFactorCookie();
           throw new InvalidJWT();
         }
 
-        const { success } = verifyTOTP(
-          otpCode as string,
-          user.twoFactorSecret!
-        );
-        if (!success) {
-          throw new InvalidToken();
+        if (method === "app") {
+          const { success } = verifyTotp(code as string, user.twoFactorSecret);
+          if (!success) throw new InvalidToken();
+        } else if (method === "backup-code") {
+          const { success } = await verifyBackupCode(
+            user.id,
+            code as string,
+            user.backupCodes
+          );
+          if (!success) throw new InvalidToken();
+        } else {
+          throw new Error();
         }
 
         await removeTwoFactorCookie();

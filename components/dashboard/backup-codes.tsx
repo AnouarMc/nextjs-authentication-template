@@ -34,10 +34,7 @@ const BackupCodes = ({ firstTimeBackups }: { firstTimeBackups: string[] }) => {
     setShowBackup(true);
     const { success, errors, backupCodes } = await regenerateBackupCodes();
     if (success && backupCodes) {
-      const codes = backupCodes.map(
-        (code) => `${code.slice(0, 4)}-${code.slice(4)}`
-      );
-      setBackupCodes(codes);
+      setBackupCodes(backupCodes);
     } else if (errors) {
       setError(errors?.[0].message);
     }
@@ -81,10 +78,7 @@ const BackupCodes = ({ firstTimeBackups }: { firstTimeBackups: string[] }) => {
   useEffect(() => {
     if (firstTimeBackups?.length !== 0) {
       setShowBackup(true);
-      const codes = firstTimeBackups.map(
-        (code) => `${code.slice(0, 4)}-${code.slice(4)}`
-      );
-      setBackupCodes(codes);
+      setBackupCodes(firstTimeBackups);
     }
   }, [firstTimeBackups]);
 
