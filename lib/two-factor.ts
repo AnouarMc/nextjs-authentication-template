@@ -13,7 +13,13 @@ import { updateBackupCodes } from "@/data/two-factor";
 const secretKey = process.env.AUTH_SECRET;
 const secret = new TextEncoder().encode(secretKey);
 
-export const setTwoFactorCookie = async (userId: string) => {
+export const setTwoFactorCookie = async ({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider?: string;
+}) => {
   const jwt = await new SignJWT({ userId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -26,6 +32,10 @@ export const setTwoFactorCookie = async (userId: string) => {
     maxAge: 60 * 10, //10 min
     sameSite: "strict",
   });
+  if (provider)
+    cookieStore.set("provider_linking", provider, {
+      httpOnly: false,
+    });
 };
 
 export const getTwoFactorCookie = async () => {

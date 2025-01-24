@@ -12,3 +12,10 @@ export const formatZodErrors = (error: ZodError) => {
     message: issue.message,
   }));
 };
+
+export const getClientCookie = (name: string) => {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((c) => c.startsWith(`${name}=`));
+  if (cookie) return cookie.split("=")[1];
+  return null;
+};

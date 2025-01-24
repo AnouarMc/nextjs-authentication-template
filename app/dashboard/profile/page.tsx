@@ -19,7 +19,7 @@ const Page = async () => {
     new Map(accounts.map((account) => [account.email, account])).values()
   );
   const connectedAccounts = accounts.filter(
-    (account) => account.provider !== "email"
+    (account) => account.provider !== "credentials"
   );
 
   return (

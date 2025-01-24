@@ -15,7 +15,10 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { getClientCookie } from "@/lib/utils";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { otpSchema, otpSchemaType } from "@/schemas";
@@ -26,6 +29,7 @@ const AuthAppVerification = ({
 }: {
   onAlternatives: () => void;
 }) => {
+  const router = useRouter();
   const form = useForm<otpSchemaType>({
     resolver: zodResolver(otpSchema),
     defaultValues: {
@@ -36,7 +40,14 @@ const AuthAppVerification = ({
 
   const onTwoFactorSubmit = form.handleSubmit(async ({ otpCode }) => {
     const { success, errors } = await signInWithTwoFactor(otpCode, "app");
-    if (!success) {
+    if (success) {
+      const provider = getClientCookie("provider_linking");
+      if (provider) {
+        await signIn(provider);
+      } else {
+        router.push("/dashboard/profile");
+      }
+    } else {
       errors?.forEach(({ name, message }) =>
         form.setError(name as keyof otpSchemaType, { message })
       );

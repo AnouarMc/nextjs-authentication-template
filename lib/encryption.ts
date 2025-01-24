@@ -1,3 +1,5 @@
+import "server-only";
+
 import { managedNonce } from "@noble/ciphers/webcrypto";
 import { xchacha20poly1305 } from "@noble/ciphers/chacha";
 import { hexToBytes, bytesToHex, utf8ToBytes } from "@noble/ciphers/utils";

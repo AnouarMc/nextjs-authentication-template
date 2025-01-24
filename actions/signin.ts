@@ -162,15 +162,11 @@ export const signInWithTwoFactor = async (
     await signIn("TwoFactor", {
       code,
       method,
-      redirectTo: redirectUrl,
+      redirect: false,
     });
 
     return { success: true, errors: null };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
     switch (true) {
       case error instanceof InvalidJWT:
         redirect("/sign-in");

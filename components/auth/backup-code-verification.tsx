@@ -11,7 +11,10 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { getClientCookie } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +25,7 @@ const BackupCodeVerification = ({
 }: {
   onAlternatives: () => void;
 }) => {
+  const router = useRouter();
   const form = useForm<backupCodeSchemaType>({
     resolver: zodResolver(backupCodeSchema),
     defaultValues: {
@@ -34,7 +38,14 @@ const BackupCodeVerification = ({
       otpCode,
       "backup-code"
     );
-    if (!success) {
+    if (success) {
+      const provider = getClientCookie("provider_linking");
+      if (provider) {
+        await signIn(provider);
+      } else {
+        router.push("/dashboard/profile");
+      }
+    } else {
       errors?.forEach(({ name, message }) =>
         form.setError(name as keyof backupCodeSchemaType, { message })
       );

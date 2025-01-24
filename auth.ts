@@ -9,7 +9,11 @@ import {
 import { sendEmail } from "@/lib/email";
 import { tokenTTLInSeconds } from "@/constants";
 import { verifyTokenOrThrow } from "@/data/verification";
-import { getAccountAndUser, updateAccountEmail } from "@/data/account";
+import {
+  getAccountAndUser,
+  getAccountByProvider,
+  updateAccountEmail,
+} from "@/data/account";
 import { getUserById, updateUserImage, updateUserName } from "@/data/user";
 
 import bcrypt from "bcrypt";
@@ -22,6 +26,7 @@ import { InvalidJWT, InvalidToken } from "@/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { decrypt } from "./lib/encryption";
 
 export const {
   handlers,
@@ -86,7 +91,10 @@ export const {
         }
 
         if (method === "app") {
-          const { success } = verifyTotp(code as string, user.twoFactorSecret);
+          const { success } = verifyTotp(
+            code as string,
+            decrypt(user.twoFactorSecret)
+          );
           if (!success) throw new InvalidToken();
         } else if (method === "backup-code") {
           const { success } = await verifyBackupCode(
@@ -100,7 +108,7 @@ export const {
         }
 
         await removeTwoFactorCookie();
-        return { ...user, twoFactorPassed: true };
+        return user;
       },
     }),
     {
@@ -118,16 +126,32 @@ export const {
     },
   ],
   callbacks: {
-    async signIn({ user, email }) {
+    async signIn({ user, email, account }) {
       if (email?.verificationRequest) return true;
+      if (account?.provider === "TwoFactor") return true;
       const session = await auth();
       if (session) return true;
 
-      if (user.twoFactorEnabled && !user.twoFactorPassed) {
-        await setTwoFactorCookie(user.id!);
+      let userId = user.id;
+      let alreadyLinked = true;
+      if (account?.type === "oauth") {
+        const acc = await getAccountByProvider(user.email!, account.provider);
+        if (acc) {
+          userId = acc.userId;
+          user.twoFactorEnabled = acc.user.twoFactorEnabled;
+          alreadyLinked = acc.provider === account.provider;
+        }
+      }
+      if (!user.twoFactorEnabled) return true;
+
+      if (userId) {
+        await setTwoFactorCookie({
+          userId,
+          ...(!alreadyLinked && { provider: account?.provider }),
+        });
         return "/sign-in/two-factor";
       }
-      return true;
+      return false;
     },
     async jwt({ token, session, trigger, user }) {
       if (trigger === "update") {

@@ -19,6 +19,19 @@ export const getAccountAndUser = async (email: string) => {
   });
 };
 
+export const getAccountByProvider = async (email: string, provider: string) => {
+  const accounts = await db.account.findMany({
+    include: { user: true },
+    where: { email },
+  });
+
+  return (
+    accounts.find((account) => account.provider === provider) ||
+    accounts[0] ||
+    null
+  );
+};
+
 export const updateAccountEmail = async (
   provider: string,
   providerAccountId: string,
@@ -59,7 +72,7 @@ export const createAccount = async (userId: string, email: string) => {
       userId,
       email: email,
       type: "email",
-      provider: "email",
+      provider: "credentials",
       providerAccountId: email,
     },
   });
@@ -68,7 +81,7 @@ export const createAccount = async (userId: string, email: string) => {
 export const deleteAccount = async (userId: string, email: string) => {
   const accounts = await getAccountsByUserId(userId);
   const connectedAccount = accounts.find(
-    (account) => account.provider !== "email" && account.email === email
+    (account) => account.provider !== "credentials" && account.email === email
   );
 
   if (connectedAccount) {
@@ -105,7 +118,7 @@ export const deleteAccount = async (userId: string, email: string) => {
         userId_email_provider: {
           userId,
           email,
-          provider: "email",
+          provider: "credentials",
         },
       },
     });
@@ -149,7 +162,7 @@ export const deleteConnectedAccount = async (
         userId_email_provider: {
           userId,
           email,
-          provider: "email",
+          provider: "credentials",
         },
       },
     });
@@ -160,7 +173,7 @@ export const deleteConnectedAccount = async (
           userId,
           email: email,
           type: "email",
-          provider: "email",
+          provider: "credentials",
           providerAccountId: email,
         },
       });

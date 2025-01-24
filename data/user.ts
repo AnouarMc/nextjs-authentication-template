@@ -19,7 +19,7 @@ export const createUserAndAccount = async (email: string, password: string) => {
           {
             email,
             type: "email",
-            provider: "email",
+            provider: "credentials",
             providerAccountId: email,
           },
         ],
