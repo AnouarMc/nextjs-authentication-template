@@ -15,8 +15,9 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { toast } from "sonner";
 import Image from "next/image";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2, Plus } from "lucide-react";
@@ -74,115 +75,108 @@ const AddTwoFactor = ({
 
   return (
     <>
-      {step === "link" && (
-        <Button
-          variant="ghost"
-          className="w-full justify-start px-0 pl-1 text-primary hover:text-primary/90"
-          onClick={getTwoFactorQRCode}
-        >
-          <Plus />
-          <span>Add two-step verification</span>
-        </Button>
-      )}
+      <Button
+        variant="ghost"
+        className={cn(
+          "w-full justify-start px-0 pl-1 text-primary hover:text-primary/90 transition-opacity duration-300",
+          { "opacity-0 pointer-events-none": step !== "link" }
+        )}
+        onClick={getTwoFactorQRCode}
+      >
+        <Plus />
+        <span>Add two-step verification</span>
+      </Button>
 
-      {step === "qr" && (
-        <DashboardCard
-          title="Add authenticator application"
-          subtitle="Set up a new sign-in method by scanning this QR code in your authenticator app"
-        >
-          <div>
-            {qrCode.data ? (
-              <Image
-                className="mx-auto"
-                src={qrCode.data}
-                width={200}
-                height={200}
-                alt="qr code"
-              />
-            ) : (
-              <div className="w-[200px] h-[200px] flex justify-center items-center rounded-md bg-gray-400 mx-auto">
-                <Loader2 className="w-8 h-8 animate-spin" />
-              </div>
-            )}
-          </div>
-          <div className="flex gap-x-2 justify-end mt-4">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setStep("link")}
+      <DashboardCard
+        title="Add authenticator application"
+        subtitle="Set up a new sign-in method by scanning this QR code in your authenticator app"
+        isVisible={step === "qr"}
+      >
+        <div>
+          {qrCode.data ? (
+            <Image
+              className="mx-auto"
+              src={qrCode.data}
+              width={200}
+              height={200}
+              alt="qr code"
+            />
+          ) : (
+            <div className="w-[200px] h-[200px] flex justify-center items-center rounded-md bg-gray-400 mx-auto">
+              <Loader2 className="w-8 h-8 animate-spin" />
+            </div>
+          )}
+        </div>
+        <div className="flex gap-x-2 justify-end mt-4">
+          <Button type="button" variant="ghost" onClick={() => setStep("link")}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => setStep("verification")}>
+            Continue
+          </Button>
+        </div>
+      </DashboardCard>
+
+      <DashboardCard
+        title="Add authenticator application"
+        isVisible={step === "verification"}
+      >
+        <div className="text-center mt-4">
+          <Form {...form}>
+            <form
+              onSubmit={verifyTwoFactorCode}
+              className="space-y-6 text-center"
             >
-              Cancel
-            </Button>
-            <Button type="submit" onClick={() => setStep("verification")}>
-              Continue
-            </Button>
-          </div>
-        </DashboardCard>
-      )}
+              <FormError message={errors.root?.message} />
+              <FormField
+                control={form.control}
+                name="otpCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col items-center">
+                      <FormControl>
+                        <InputOTP
+                          autoFocus
+                          maxLength={6}
+                          pattern={REGEXP_ONLY_DIGITS}
+                          disabled={isSubmitting}
+                          onComplete={verifyTwoFactorCode}
+                          {...field}
+                        >
+                          {[...Array(6)].map((_, index) => (
+                            <InputOTPGroup key={index}>
+                              <InputOTPSlot index={index} />
+                            </InputOTPGroup>
+                          ))}
+                        </InputOTP>
+                      </FormControl>
+                      <FormMessage className="mt-4" />
+                    </div>
+                  </FormItem>
+                )}
+              />
 
-      {step === "verification" && (
-        <DashboardCard title="Add authenticator application">
-          <div className="text-center mt-4">
-            <Form {...form}>
-              <form
-                onSubmit={verifyTwoFactorCode}
-                className="space-y-6 text-center"
-              >
-                <FormError message={errors.root?.message} />
-                <FormField
-                  control={form.control}
-                  name="otpCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-col items-center">
-                        <FormControl>
-                          <InputOTP
-                            autoFocus
-                            maxLength={6}
-                            pattern={REGEXP_ONLY_DIGITS}
-                            disabled={isSubmitting}
-                            onComplete={verifyTwoFactorCode}
-                            {...field}
-                          >
-                            {[...Array(6)].map((_, index) => (
-                              <InputOTPGroup key={index}>
-                                <InputOTPSlot index={index} />
-                              </InputOTPGroup>
-                            ))}
-                          </InputOTP>
-                        </FormControl>
-                        <FormMessage className="mt-4" />
-                      </div>
-                    </FormItem>
-                  )}
-                />
+              <div className="flex gap-x-2 justify-end mt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    form.reset();
+                    setStep("link");
+                  }}
+                >
+                  Cancel
+                </Button>
 
-                <div className="flex gap-x-2 justify-end mt-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    disabled={isSubmitting}
-                    onClick={() => {
-                      form.reset();
-                      setStep("link");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      "Save"
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </DashboardCard>
-      )}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? <Loader2 className="animate-spin" /> : "Save"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </DashboardCard>
     </>
   );
 };

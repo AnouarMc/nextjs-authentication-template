@@ -84,39 +84,38 @@ const Account = ({
         </DropdownMenu>
       </div>
 
-      {showRemove && (
-        <DashboardCard
-          title="Remove email address"
-          subtitle={`${email} will be removed from this account`}
-        >
-          <div className="text-sm text-gray-500">
-            You will no longer be able to sign in using this email address.
-          </div>
-          <FormError message={error} className="mt-4" />
-          <div className="flex gap-x-2 justify-end mt-4">
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={isSubmitting}
-              onClick={() => {
-                setError("");
-                setShowRemove(false);
-              }}
-            >
-              Cancel
-            </Button>
+      <DashboardCard
+        title="Remove email address"
+        subtitle={`${email} will be removed from this account`}
+        isVisible={showRemove}
+      >
+        <div className="text-sm text-gray-500">
+          You will no longer be able to sign in using this email address.
+        </div>
+        <FormError message={error} className="mt-4" />
+        <div className="flex gap-x-2 justify-end mt-4">
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={isSubmitting}
+            onClick={() => {
+              setError("");
+              setShowRemove(false);
+            }}
+          >
+            Cancel
+          </Button>
 
-            <Button
-              variant="destructive"
-              type="submit"
-              disabled={isSubmitting}
-              onClick={onRemove}
-            >
-              {isSubmitting ? <Loader2 className="animate-spin" /> : "Remove"}
-            </Button>
-          </div>
-        </DashboardCard>
-      )}
+          <Button
+            variant="destructive"
+            type="submit"
+            disabled={isSubmitting}
+            onClick={onRemove}
+          >
+            {isSubmitting ? <Loader2 className="animate-spin" /> : "Remove"}
+          </Button>
+        </div>
+      </DashboardCard>
     </>
   );
 };

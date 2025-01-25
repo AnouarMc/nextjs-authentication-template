@@ -61,30 +61,29 @@ const RemoveTwoFactor = () => {
           </DropdownMenu>
         </div>
 
-        {showRemove && (
-          <DashboardCard
-            title="Remove two-step verification"
-            subtitle="Your account may not be as secure. Are you sure you want to continue?"
-          >
-            <FormError message={error} />
-            <form onSubmit={onRemove} className="flex gap-x-2 justify-end mt-4">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setError("");
-                  setShowRemove(false);
-                }}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button variant="destructive" disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="animate-spin" /> : "Delete"}
-              </Button>
-            </form>
-          </DashboardCard>
-        )}
+        <DashboardCard
+          title="Remove two-step verification"
+          subtitle="Your account may not be as secure. Are you sure you want to continue?"
+          isVisible={showRemove}
+        >
+          <FormError message={error} />
+          <form onSubmit={onRemove} className="flex gap-x-2 justify-end mt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setError("");
+                setShowRemove(false);
+              }}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="animate-spin" /> : "Delete"}
+            </Button>
+          </form>
+        </DashboardCard>
       </div>
     </div>
   );

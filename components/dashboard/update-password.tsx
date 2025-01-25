@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -54,102 +55,105 @@ const UpdatePassword = () => {
         </h2>
       </div>
       <div className="grow overflow-hidden">
-        {!showUpdate ? (
-          <div className="flex items-center grow gap-x-4 px-4">
-            <div>••••••••••</div>
+        <div
+          className={cn(
+            "flex items-center grow gap-x-4 px-4 transition-opacity duration-300",
+            { "opacity-0 pointer-events-none": showUpdate }
+          )}
+        >
+          <div>••••••••••</div>
 
-            <Button
-              variant="ghost"
-              className="ml-auto text-primary hover:text-primary/90"
-              onClick={() => setShowUpdate(true)}
+          <Button
+            variant="ghost"
+            className="ml-auto text-primary hover:text-primary/90"
+            onClick={() => setShowUpdate(true)}
+          >
+            Update Password
+          </Button>
+        </div>
+
+        <DashboardCard title="Update password" isVisible={showUpdate}>
+          <Form {...form}>
+            <form
+              onSubmit={updatePassword}
+              className="space-y-6 text-left mt-4"
             >
-              Update Password
-            </Button>
-          </div>
-        ) : (
-          <DashboardCard title="Update password">
-            <Form {...form}>
-              <form
-                onSubmit={updatePassword}
-                className="space-y-6 text-left mt-4"
-              >
-                <FormError message={errors.root?.message} />
-                <FormField
-                  control={form.control}
-                  name="currentPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current password</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoFocus
-                          {...field}
-                          disabled={isSubmitting}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+              <FormError message={errors.root?.message} />
+              <FormField
+                control={form.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current password</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoFocus
+                        {...field}
+                        disabled={isSubmitting}
+                        type="password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        type="password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        type="password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex gap-x-2 justify-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setShowUpdate(false);
+                    form.reset();
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    "Update"
                   )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New password</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isSubmitting}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm password</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isSubmitting}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex gap-x-2 justify-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      setShowUpdate(false);
-                      form.reset();
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      "Update"
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </DashboardCard>
-        )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DashboardCard>
       </div>
     </div>
   );

@@ -5,8 +5,9 @@ import UpdateName from "@/components/dashboard/update-name";
 import UpdateImage from "@/components/dashboard/update-image";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 
-import { useState } from "react";
 import { User } from "next-auth";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import LoadingStateProvider from "@/providers/loading-state-provider";
 
@@ -20,30 +21,34 @@ const Profile = ({ user }: { user: User }) => {
           Profile
         </h2>
       </div>
-      <div className="flex items-center flex-row justify-between grow overflow-hidden gap-x-2">
-        {!showUpdate ? (
-          <>
-            <UserAvatar user={user} />
-            <div className="text-ellipsis overflow-hidden whitespace-nowrap">
-              {user?.name}
-            </div>
+      <div className="grow overflow-hidden">
+        <div
+          className={cn(
+            "flex items-center gap-x-2 transition-opacity duration-300",
+            { "opacity-0 pointer-events-none": showUpdate }
+          )}
+        >
+          <UserAvatar user={user} className="shrink-0" />
+          <div className="text-ellipsis overflow-hidden whitespace-nowrap flex-shrink">
+            {user?.name}
+            Lorem ipsum dolor Lorem ipsum dolor
+          </div>
 
-            <Button
-              variant="ghost"
-              className="ml-auto text-primary hover:text-primary/90"
-              onClick={() => setShowUpdate(true)}
-            >
-              Update Profile
-            </Button>
-          </>
-        ) : (
-          <DashboardCard title="Update profile">
-            <LoadingStateProvider>
-              <UpdateImage user={user} />
-              <UpdateName user={user} onClose={() => setShowUpdate(false)} />
-            </LoadingStateProvider>
-          </DashboardCard>
-        )}
+          <Button
+            variant="ghost"
+            className="ml-auto text-primary hover:text-primary/90"
+            onClick={() => setShowUpdate(true)}
+          >
+            Update Profile
+          </Button>
+        </div>
+
+        <DashboardCard title="Update profile" isVisible={showUpdate}>
+          <LoadingStateProvider>
+            <UpdateImage user={user} />
+            <UpdateName user={user} onClose={() => setShowUpdate(false)} />
+          </LoadingStateProvider>
+        </DashboardCard>
       </div>
     </div>
   );

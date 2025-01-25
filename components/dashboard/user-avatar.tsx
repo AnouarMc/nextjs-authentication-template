@@ -1,9 +1,16 @@
+import { cn } from "@/lib/utils";
 import { User } from "next-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const UserAvatar = ({ user, preview }: { user?: User; preview?: string }) => {
+interface UserAvatarProps {
+  user?: User;
+  preview?: string;
+  className?: string;
+}
+
+const UserAvatar = ({ user, preview, className }: UserAvatarProps) => {
   return (
-    <Avatar className="h-12 w-12 rounded-lg">
+    <Avatar className={cn("h-10 w-10 rounded-lg", className)}>
       <AvatarImage
         className="rounded-full"
         src={preview ?? user?.image ?? undefined}

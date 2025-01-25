@@ -83,7 +83,7 @@ const BackupCodes = ({ firstTimeBackups }: { firstTimeBackups: string[] }) => {
   }, [firstTimeBackups]);
 
   return (
-    <div className="max-w-screen-sm flex flex-col md:flex-row  mt-2">
+    <div className="max-w-screen-sm flex flex-col md:flex-row mt-2">
       <div className="grow overflow-hidden">
         <div className="flex items-center gap-x-2 px-4">
           <Archive className="w-4 h-4" />
@@ -106,64 +106,63 @@ const BackupCodes = ({ firstTimeBackups }: { firstTimeBackups: string[] }) => {
           </DropdownMenu>
         </div>
 
-        {showBackup && (
-          <DashboardCard
-            title="Add backup code verification"
-            subtitle="Backup codes are now enabled. You can use one of these to sign in to your account, if you lose access to your authentication device. Each code can only be used once"
-          >
-            {isSubmitting ? (
-              <div className="w-full py-2 mt-2 mb-4 flex justify-center items-center mx-auto border">
-                <Loader2 className="w-8 h-8 animate-spin" />
-              </div>
-            ) : error ? (
-              <FormError message={error} />
-            ) : (
-              <div className="border rounded-lg mt-2 mb-4 ">
-                <div className="grid grid-cols-2 text-center gap-y-4 pt-4">
-                  {backupCodes.map((code) => (
-                    <div key={code}>{code}</div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 mt-4">
-                  <Button
-                    variant="outline"
-                    className="rounded-none"
-                    onClick={downloadFile}
-                  >
-                    <Download />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="rounded-none"
-                    onClick={copyToClipboard}
-                  >
-                    {copied ? <Check /> : <Files />}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="rounded-none"
-                    onClick={printCodes}
-                  >
-                    <Printer />
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex">
-              <Button
-                className="ml-auto"
-                disabled={isSubmitting}
-                onClick={() => {
-                  setBackupCodes([]);
-                  setShowBackup(false);
-                }}
-              >
-                Finish
-              </Button>
+        <DashboardCard
+          title="Add backup code verification"
+          subtitle="Backup codes are now enabled. You can use one of these to sign in to your account, if you lose access to your authentication device. Each code can only be used once"
+          isVisible={showBackup}
+        >
+          {isSubmitting ? (
+            <div className="w-full py-2 mt-2 mb-4 flex justify-center items-center mx-auto border">
+              <Loader2 className="w-8 h-8 animate-spin" />
             </div>
-          </DashboardCard>
-        )}
+          ) : error ? (
+            <FormError message={error} />
+          ) : (
+            <div className="border rounded-lg mt-2 mb-4 ">
+              <div className="grid grid-cols-2 text-center gap-y-4 pt-4">
+                {backupCodes.map((code) => (
+                  <div key={code}>{code}</div>
+                ))}
+              </div>
+              <div className="grid grid-cols-3 mt-4">
+                <Button
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={downloadFile}
+                >
+                  <Download />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={copyToClipboard}
+                >
+                  {copied ? <Check /> : <Files />}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={printCodes}
+                >
+                  <Printer />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="flex">
+            <Button
+              className="ml-auto"
+              disabled={isSubmitting}
+              onClick={() => {
+                setBackupCodes([]);
+                setShowBackup(false);
+              }}
+            >
+              Finish
+            </Button>
+          </div>
+        </DashboardCard>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import FormError from "@/components/auth/form-error";
 import { logOut, removeUser } from "@/actions/manage-account";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -35,55 +36,57 @@ const DeleteUser = () => {
         </h2>
       </div>
       <div className="grow overflow-hidden">
-        {!showRemove ? (
-          <Button
-            onClick={() => setShowRemove(true)}
-            variant="ghost"
-            className="text-destructive hover:!text-destructive"
-          >
-            Delete Account
-          </Button>
-        ) : (
-          <DashboardCard
-            title="Delete account"
-            subtitle="Are you sure you want to delete your account?"
-          >
-            <div className="text-destructive mb-4 -mt-3 text-sm">
-              This action is permanent and irreversible
-            </div>
-            <FormError message={error} />
+        <Button
+          onClick={() => setShowRemove(true)}
+          variant="ghost"
+          className={cn(
+            "text-destructive hover:!text-destructive transition-opacity duration-300",
+            { "opacity-0 pointer-events-none": showRemove }
+          )}
+        >
+          Delete Account
+        </Button>
 
-            <div className="text-sm mb-2">
-              Type &quot;Delete account&quot; below to continue
-            </div>
-            <Input
-              autoFocus
-              value={data}
-              onChange={(e) => setData(e.currentTarget.value)}
-            />
+        <DashboardCard
+          title="Delete account"
+          subtitle="Are you sure you want to delete your account?"
+          isVisible={showRemove}
+        >
+          <div className="text-destructive mb-4 -mt-3 text-sm">
+            This action is permanent and irreversible
+          </div>
+          <FormError message={error} />
 
-            <form onSubmit={onRemove} className="flex gap-x-2 justify-end mt-4">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setError("");
-                  setData("");
-                  setShowRemove(false);
-                }}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                disabled={isSubmitting || data !== "Delete account"}
-              >
-                {isSubmitting ? <Loader2 className="animate-spin" /> : "Delete"}
-              </Button>
-            </form>
-          </DashboardCard>
-        )}
+          <div className="text-sm mb-2">
+            Type &quot;Delete account&quot; below to continue
+          </div>
+          <Input
+            autoFocus
+            value={data}
+            onChange={(e) => setData(e.currentTarget.value)}
+          />
+
+          <form onSubmit={onRemove} className="flex gap-x-2 justify-end mt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setError("");
+                setData("");
+                setShowRemove(false);
+              }}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={isSubmitting || data !== "Delete account"}
+            >
+              {isSubmitting ? <Loader2 className="animate-spin" /> : "Delete"}
+            </Button>
+          </form>
+        </DashboardCard>
       </div>
     </div>
   );
