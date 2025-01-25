@@ -15,7 +15,12 @@ import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import { CredentialsSignin } from "next-auth";
 import { defaultError, redirectUrl } from "@/constants";
-import { ExpiredToken, InvalidJWT, InvalidToken } from "@/types";
+import {
+  ExpiredToken,
+  InvalidJWT,
+  InvalidToken,
+  TooManyRequests,
+} from "@/types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export const checkEmail = async (email: emailSchemaType) => {
@@ -56,6 +61,18 @@ export const checkEmail = async (email: emailSchemaType) => {
       throw error;
     }
 
+    if (error instanceof TooManyRequests) {
+      return {
+        success: false,
+        errors: [
+          {
+            name: "root",
+            message: "Too many requests. Please try again later",
+          },
+        ],
+      };
+    }
+
     console.error(error);
     return defaultError;
   }
@@ -72,7 +89,7 @@ export const signInWithPassword = async (creds: signupSchemaType) => {
     }
 
     const { email, password } = validatedCreds.data;
-    await signIn("credentials", {
+    await signIn("EmailAndPassword", {
       email,
       password,
       redirectTo: redirectUrl,
@@ -84,16 +101,28 @@ export const signInWithPassword = async (creds: signupSchemaType) => {
       throw error;
     }
 
-    if (error instanceof CredentialsSignin) {
-      return {
-        success: false,
-        errors: [
-          {
-            name: "password",
-            message: "Password is incorrect. Try again, or use another method",
-          },
-        ],
-      };
+    switch (true) {
+      case error instanceof CredentialsSignin:
+        return {
+          success: false,
+          errors: [
+            {
+              name: "password",
+              message:
+                "Password is incorrect. Try again, or use another method",
+            },
+          ],
+        };
+      case error instanceof TooManyRequests:
+        return {
+          success: false,
+          errors: [
+            {
+              name: "root",
+              message: "Too many requests. Please try again later",
+            },
+          ],
+        };
     }
 
     console.error(error);
@@ -138,6 +167,16 @@ export const signInWithToken = async (email: string, otpCode: string) => {
           success: false,
           errors: [{ name: "otpCode", message: "This code has expired" }],
         };
+      case error instanceof TooManyRequests:
+        return {
+          success: false,
+          errors: [
+            {
+              name: "root",
+              message: "Too many requests. Please try again later",
+            },
+          ],
+        };
     }
 
     console.error(error);
@@ -174,6 +213,16 @@ export const signInWithTwoFactor = async (
         return {
           success: false,
           errors: [{ name: "otpCode", message: "Invalid code" }],
+        };
+      case error instanceof TooManyRequests:
+        return {
+          success: false,
+          errors: [
+            {
+              name: "root",
+              message: "Too many requests. Please try again later",
+            },
+          ],
         };
     }
 

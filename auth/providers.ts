@@ -15,9 +15,10 @@ import crypto from "node:crypto";
 import { tokenTTLInSeconds } from "@/constants";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import { InvalidJWT, InvalidToken } from "@/types";
+import { InvalidJWT, InvalidToken, TooManyRequests } from "@/types";
 import Credentials from "next-auth/providers/credentials";
 import { CredentialsSignin, NextAuthConfig } from "next-auth";
+import { shouldRateLimit } from "./rate-limiter";
 
 export const providers = [
   Google({
@@ -31,8 +32,12 @@ export const providers = [
     allowDangerousEmailAccountLinking: true,
   }),
   Credentials({
-    async authorize({ email, password }) {
-      // TODO: Implement rate limiting
+    id: "EmailAndPassword",
+    async authorize({ email, password }, req) {
+      const { success } = shouldRateLimit("email-password", req);
+      if (success) {
+        throw new TooManyRequests();
+      }
       const account = await getAccountAndUser(email as string);
       const user = account?.user;
       if (!account || !user?.password) {
@@ -52,8 +57,11 @@ export const providers = [
   }),
   Credentials({
     id: "EmailAndOTP",
-    async authorize({ email, otpCode }) {
-      // TODO: Implement rate limiting
+    async authorize({ email, otpCode }, req) {
+      const { success } = shouldRateLimit("email-otp", req);
+      if (success) {
+        throw new TooManyRequests();
+      }
       await verifyTokenOrThrow(email as string, otpCode as string);
 
       const account = await getAccountAndUser(email as string);
@@ -66,9 +74,11 @@ export const providers = [
   }),
   Credentials({
     id: "TwoFactor",
-    async authorize({ code, method }) {
-      // TODO: Implement rate limiting
-
+    async authorize({ code, method }, req) {
+      const { success } = shouldRateLimit("two-factor", req);
+      if (success) {
+        throw new TooManyRequests();
+      }
       const userId = (await getTwoFactorCookie()) as string;
       const user = await getUserById(userId);
       if (!user || !user.backupCodes || !user.twoFactorSecret) {
@@ -106,8 +116,11 @@ export const providers = [
       const token = crypto.randomInt(100_000, 1_000_000).toString();
       return token;
     },
-    async sendVerificationRequest({ identifier: email, token }) {
-      // TODO: Implement rate limiting
+    async sendVerificationRequest({ identifier: email, token, request }) {
+      const { success } = shouldRateLimit("verification", request);
+      if (success) {
+        throw new TooManyRequests();
+      }
       await sendEmail(email, token);
     },
   },

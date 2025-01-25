@@ -6,7 +6,7 @@ import { verifyTokenOrThrow } from "@/data/verification";
 import { signIn } from "@/auth";
 import { defaultError } from "@/constants";
 import { emailSchema, otpSchema } from "@/schemas";
-import { ExpiredToken, InvalidToken } from "@/types";
+import { ExpiredToken, InvalidToken, TooManyRequests } from "@/types";
 
 export const sendVerification = async (email: string) => {
   try {
@@ -21,6 +21,17 @@ export const sendVerification = async (email: string) => {
     });
     return { success: true, errors: null };
   } catch (error) {
+    if (error instanceof TooManyRequests) {
+      return {
+        success: false,
+        errors: [
+          {
+            name: "root",
+            message: "Too many requests. Please try again later",
+          },
+        ],
+      };
+    }
     console.error(error);
     return defaultError;
   }

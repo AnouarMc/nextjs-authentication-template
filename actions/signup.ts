@@ -15,7 +15,7 @@ import {
   signupSchemaType,
 } from "@/schemas";
 import { signIn } from "@/auth";
-import { ExpiredToken, InvalidToken } from "@/types";
+import { ExpiredToken, InvalidToken, TooManyRequests } from "@/types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export const validateCreds = async (
@@ -52,6 +52,17 @@ export const validateCreds = async (
     });
     return { success: true, errors: null };
   } catch (error) {
+    if (error instanceof TooManyRequests) {
+      return {
+        success: false,
+        errors: [
+          {
+            name: "root",
+            message: "Too many requests. Please try again later",
+          },
+        ],
+      };
+    }
     console.error(error);
     return defaultError;
   }

@@ -9,6 +9,9 @@ export class InvalidToken extends AuthError {
 export class InvalidJWT extends AuthError {
   static type = "InvalidJWT";
 }
+export class TooManyRequests extends AuthError {
+  static type = "TooManyRequests";
+}
 
 export interface AccountCustomProps {
   email: string;
