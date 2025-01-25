@@ -31,7 +31,6 @@ const Profile = ({ user }: { user: User }) => {
           <UserAvatar user={user} className="shrink-0" />
           <div className="text-ellipsis overflow-hidden whitespace-nowrap flex-shrink">
             {user?.name}
-            Lorem ipsum dolor Lorem ipsum dolor
           </div>
 
           <Button

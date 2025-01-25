@@ -36,7 +36,6 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
   const onSubmit = async (passwords: resetPasswordSchemaType) => {
     const { success, errors } = await resetPassword(email, otpCode, passwords);
     if (!success) {
-      console.log("yeah it is not working");
       errors?.forEach(({ name, message }) =>
         form.setError(name as keyof resetPasswordSchemaType, { message })
       );
