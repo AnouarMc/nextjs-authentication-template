@@ -1,6 +1,6 @@
 "use server";
 
-import { defaultError } from "@/constants";
+import { defaultError, redirectUrl } from "@/constants";
 import { formatZodErrors } from "@/lib/utils";
 import { createUserAndAccount } from "@/data/user";
 import { getAccountByEmail } from "@/data/account";
@@ -91,9 +91,13 @@ export const signup = async (creds: signupSchemaType, code: otpSchemaType) => {
       return defaultError;
     }
     await verifyTokenOrThrow(email, otpCode);
-
     await createUserAndAccount(email, password);
-    // TODO: sign in user
+
+    await signIn("EmailAndPassword", {
+      email,
+      password,
+      redirectTo: redirectUrl,
+    });
 
     return { success: true, errors: null };
   } catch (error) {
