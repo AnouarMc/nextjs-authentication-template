@@ -91,7 +91,12 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isLoading}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>

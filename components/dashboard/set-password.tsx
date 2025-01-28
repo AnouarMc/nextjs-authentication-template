@@ -12,12 +12,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, resetPasswordSchemaType } from "@/schemas";
@@ -80,9 +80,9 @@ const SetPassword = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New password</FormLabel>
+                    <FormLabel disabled={isSubmitting}>New password</FormLabel>
                     <FormControl>
-                      <Input
+                      <FormInput
                         {...field}
                         disabled={isSubmitting}
                         type="password"
@@ -97,9 +97,11 @@ const SetPassword = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm password</FormLabel>
+                    <FormLabel disabled={isSubmitting}>
+                      Confirm password
+                    </FormLabel>
                     <FormControl>
-                      <Input
+                      <FormInput
                         {...field}
                         disabled={isSubmitting}
                         type="password"

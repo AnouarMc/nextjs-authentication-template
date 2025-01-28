@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { Separator } from "@/components/ui/separator";
+import ThemeSwitcher from "@/components/theme-switcher";
 
 export default async function Layout({
   children,
@@ -53,6 +54,7 @@ export default async function Layout({
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <DashboardTitle />
+                <ThemeSwitcher className="ml-auto" />
               </div>
             </div>
           </header>

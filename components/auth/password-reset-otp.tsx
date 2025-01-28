@@ -99,7 +99,12 @@ const PasswordResetOTP = ({
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isSubmitting}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>

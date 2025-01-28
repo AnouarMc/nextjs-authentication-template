@@ -30,17 +30,19 @@ const AuthCard = ({
   const { email } = useAuthContext();
 
   return (
-    <Card className="w-[360px] max-w-full mx-auto mb-24 text-center shadow-xl">
-      <CardHeader>
-        <Logo className="mx-auto mb-6 mt-2" width={64} />
-        <CardTitle>{title}</CardTitle>
-        {subtitle && <CardDescription>{subtitle}</CardDescription>}
-        {showEmail && <CardDescription>{email}</CardDescription>}
-      </CardHeader>
-      <CardContent>{children}</CardContent>
+    <div className="pb-24">
+      <Card className="w-[360px] max-w-full mx-auto text-center shadow-xl">
+        <CardHeader>
+          <Logo className="mx-auto mb-6 mt-2" width={64} />
+          <CardTitle>{title}</CardTitle>
+          {subtitle && <CardDescription>{subtitle}</CardDescription>}
+          {showEmail && <CardDescription>{email}</CardDescription>}
+        </CardHeader>
+        <CardContent>{children}</CardContent>
 
-      <CardFooter className="justify-center">{footer}</CardFooter>
-    </Card>
+        <CardFooter className="justify-center">{footer}</CardFooter>
+      </Card>
+    </div>
   );
 };
 export default AuthCard;

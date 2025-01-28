@@ -69,6 +69,7 @@ const UpdateImage = ({ user }: { user: User }) => {
           <form onChange={onUpload}>
             <div className="flex gap-x-2">
               <Button
+                className="dark:bg-gray-800 dark:hover:bg-gray-800/60"
                 type="button"
                 variant="outline"
                 disabled={isLoading}

@@ -35,7 +35,7 @@ const Profile = ({ user }: { user: User }) => {
 
           <Button
             variant="ghost"
-            className="ml-auto text-primary hover:text-primary/90"
+            className="ml-auto text-primary hover:text-primary"
             onClick={() => setShowUpdate(true)}
           >
             Update Profile

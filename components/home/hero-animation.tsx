@@ -72,7 +72,7 @@ const HeroAnimation = () => {
         </clipPath>
       </svg>
       <div className="flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 ">
-        <Logo width={48} className="dark:drop-shadow-[0_0_15px_white]" />
+        <Logo width={48} className="dark:drop-shadow-[0_0_15px_#db2979]" />
       </div>
       <div className="grid grid-cols-2 grid-rows-2 gap-y-52 sm:gap-y-64 gap-x-24 sm:gap-x-28">
         {data.map((item) => (

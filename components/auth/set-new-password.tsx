@@ -12,11 +12,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, resetPasswordSchemaType } from "@/schemas";
@@ -62,9 +62,13 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>New password</FormLabel>
+                <FormLabel disabled={isSubmitting}>New password</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} type="password" />
+                  <FormInput
+                    {...field}
+                    disabled={isSubmitting}
+                    type="password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -76,16 +80,25 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm password</FormLabel>
+                <FormLabel disabled={isSubmitting}>Confirm password</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} type="password" />
+                  <FormInput
+                    {...field}
+                    disabled={isSubmitting}
+                    type="password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isSubmitting}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <Loader2 className="animate-spin" />
             ) : (

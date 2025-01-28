@@ -12,11 +12,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import { User } from "next-auth";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
@@ -53,9 +53,9 @@ const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel disabled={isLoading}>Name</FormLabel>
               <FormControl>
-                <Input autoFocus {...field} disabled={isLoading} />
+                <FormInput autoFocus {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>

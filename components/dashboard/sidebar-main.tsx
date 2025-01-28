@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Settings, User, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const items = [
   {
@@ -73,20 +74,17 @@ const SidebarMain = () => {
                       <SidebarMenuSubButton asChild>
                         <Link
                           href={subItem.url}
-                          className={`flex items-center font-semibold ${
+                          className={`font-semibold ${
                             pathname === subItem.url
-                              ? "bg-gray-200 text-primary hover:!bg-gray-200 hover:text-primary dark:bg-gray-800 dark:hover:!bg-gray-800"
+                              ? "dark:!bg-black/40 !bg-black/10 !text-primary"
                               : ""
                           }`}
                         >
                           {subItem.icon && (
                             <subItem.icon
-                              className="text-primary"
-                              color={
-                                pathname === subItem.url
-                                  ? "#2563EB"
-                                  : "currentColor"
-                              }
+                              className={cn({
+                                "!text-primary": pathname === subItem.url,
+                              })}
                             />
                           )}
                           <span>{subItem.title}</span>

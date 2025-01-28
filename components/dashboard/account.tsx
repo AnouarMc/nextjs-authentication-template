@@ -54,11 +54,7 @@ const Account = ({
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
           {email}
         </div>
-        {isPrimary && (
-          <Badge variant="secondary" className="border border-gray-700/50">
-            Primary
-          </Badge>
-        )}
+        {isPrimary && <Badge variant="default">Primary</Badge>}
         <DropdownMenu>
           <DropdownMenuTrigger
             className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ml-auto"

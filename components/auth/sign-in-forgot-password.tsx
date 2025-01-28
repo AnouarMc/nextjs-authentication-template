@@ -41,7 +41,12 @@ const SignInForgotPassword = ({
         </Button>
       }
     >
-      <Button className="w-full" disabled={isLoading} onClick={sendOTP}>
+      <Button
+        variant="magic"
+        className="w-full"
+        disabled={isLoading}
+        onClick={sendOTP}
+      >
         {isLoading ? (
           <Loader2 className="animate-spin" />
         ) : (

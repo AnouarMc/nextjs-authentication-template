@@ -11,12 +11,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updatePasswordSchema, updatePasswordSchemaType } from "@/schemas";
@@ -84,13 +84,15 @@ const UpdatePassword = () => {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current password</FormLabel>
+                    <FormLabel disabled={isSubmitting}>
+                      Current password
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        autoFocus
+                      <FormInput
                         {...field}
-                        disabled={isSubmitting}
                         type="password"
+                        autoFocus
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -102,9 +104,9 @@ const UpdatePassword = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New password</FormLabel>
+                    <FormLabel disabled={isSubmitting}>New password</FormLabel>
                     <FormControl>
-                      <Input
+                      <FormInput
                         {...field}
                         disabled={isSubmitting}
                         type="password"
@@ -119,9 +121,11 @@ const UpdatePassword = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm password</FormLabel>
+                    <FormLabel disabled={isSubmitting}>
+                      Confirm password
+                    </FormLabel>
                     <FormControl>
-                      <Input
+                      <FormInput
                         {...field}
                         disabled={isSubmitting}
                         type="password"

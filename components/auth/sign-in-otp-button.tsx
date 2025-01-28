@@ -19,7 +19,7 @@ const SignInOTPButton = ({ onOTP }: { onOTP?: () => void }) => {
   };
   return (
     <Button
-      variant="outline"
+      variant="magic-secondary"
       className="block overflow-hidden text-ellipsis w-full mt-2"
       disabled={isLoading}
       onClick={sendOTP}

@@ -9,13 +9,13 @@ import {
   FormItem,
   FormMessage,
   FormLabel,
+  FormInput,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { getClientCookie } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { backupCodeSchema, backupCodeSchemaType } from "@/schemas";
@@ -70,16 +70,20 @@ const BackupCodeVerification = ({
             name="otpCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Backup Code</FormLabel>
-
+                <FormLabel disabled={isSubmitting}>Backup Code</FormLabel>
                 <FormControl>
-                  <Input autoFocus {...field} disabled={isSubmitting} />
+                  <FormInput autoFocus {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit" disabled={isSubmitting}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>

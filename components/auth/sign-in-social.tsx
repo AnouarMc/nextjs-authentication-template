@@ -23,7 +23,7 @@ const SignInSocial = () => {
       {providers.map(({ name, icon, provider }) => (
         <Button
           key={provider}
-          variant="outline"
+          variant="magic-secondary"
           className="w-1/2"
           disabled={isLoading}
           onClick={() => signInWithProvider(provider)}

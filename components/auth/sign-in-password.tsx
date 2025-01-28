@@ -10,13 +10,13 @@ import {
   Form,
   FormControl,
   FormField,
+  FormInput,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordSchema, passwordSchemaType } from "@/schemas";
@@ -70,7 +70,7 @@ const SignInPassword = ({
             render={({ field }) => (
               <FormItem>
                 <div className="flex justify-between">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel disabled={isLoading}>Password</FormLabel>
                   <Button
                     className="h-4 p-0"
                     variant="link"
@@ -81,11 +81,11 @@ const SignInPassword = ({
                   </Button>
                 </div>
                 <FormControl>
-                  <Input
+                  <FormInput
+                    type="password"
+                    {...field}
                     autoFocus
                     disabled={isLoading}
-                    {...field}
-                    type="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -93,7 +93,12 @@ const SignInPassword = ({
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isLoading}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>

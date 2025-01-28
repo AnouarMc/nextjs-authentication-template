@@ -14,12 +14,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,9 +77,9 @@ const SignUpForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel disabled={isLoading}>Email Address</FormLabel>
                 <FormControl>
-                  <Input autoFocus disabled={isLoading} {...field} />
+                  <FormInput autoFocus disabled={isLoading} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -91,16 +91,21 @@ const SignUpForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel disabled={isLoading}>Password</FormLabel>
                 <FormControl>
-                  <Input disabled={isLoading} {...field} type="password" />
+                  <FormInput disabled={isLoading} {...field} type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button
+            variant="magic"
+            className="w-full"
+            type="submit"
+            disabled={isLoading}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
         </form>

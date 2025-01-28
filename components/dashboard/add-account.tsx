@@ -13,6 +13,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormInput,
 } from "@/components/ui/form";
 import {
   emailSchema,
@@ -29,7 +30,6 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,8 +85,10 @@ const Content = () => {
       <Button
         variant="ghost"
         className={cn(
-          "w-full justify-start px-0 pl-1 text-primary hover:text-primary/90 transition-opacity duration-300",
-          { "opacity-0 pointer-events-none": step !== "link" }
+          "w-full justify-start px-0 pl-1 text-primary hover:text-primary",
+          {
+            "opacity-0 pointer-events-none": step !== "link",
+          }
         )}
         onClick={() => setStep("email")}
       >
@@ -107,9 +109,15 @@ const Content = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel disabled={emailIsSubmitting}>
+                    Email Address
+                  </FormLabel>
                   <FormControl>
-                    <Input autoFocus {...field} disabled={emailIsSubmitting} />
+                    <FormInput
+                      autoFocus
+                      {...field}
+                      disabled={emailIsSubmitting}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

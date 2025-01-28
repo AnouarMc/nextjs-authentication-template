@@ -16,14 +16,14 @@ const Home = () => {
         </p>
 
         <div className="flex gap-x-4">
-          <Button size="lg" asChild className="rounded-full">
+          <Button className="rounded-full" variant="magic" size="lg" asChild>
             <Link href="/sign-in">Sign in</Link>
           </Button>
           <Button
-            variant="secondary"
+            className="rounded-full"
+            variant="magic-secondary"
             size="lg"
             asChild
-            className="rounded-full"
           >
             <Link href="/sign-up">Sign up</Link>
           </Button>
