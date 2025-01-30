@@ -14,9 +14,11 @@ describe("Sign-in flow", () => {
       const email = Cypress.env("testing_email");
       const password = Cypress.env("testing_password");
 
+      cy.url().should("include", "/sign-in");
       cy.get('[data-cy="email"]').type(email);
       cy.get('[data-cy="next"]').click();
 
+      cy.url().should("include", "/sign-in/password");
       cy.get('[data-cy="password"]').type(password);
       cy.get('[data-cy="next"]').click();
 

@@ -68,6 +68,7 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
                     {...field}
                     disabled={isSubmitting}
                     type="password"
+                    data-cy="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -86,6 +87,7 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
                     {...field}
                     disabled={isSubmitting}
                     type="password"
+                    data-cy="confirm-password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -98,6 +100,7 @@ const SetNewPassword = ({ otpCode }: { otpCode: string }) => {
             className="w-full"
             type="submit"
             disabled={isSubmitting}
+            data-cy="next"
           >
             {isSubmitting ? (
               <Loader2 className="animate-spin" />

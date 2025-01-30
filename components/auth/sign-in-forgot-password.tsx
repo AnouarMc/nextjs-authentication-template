@@ -46,6 +46,7 @@ const SignInForgotPassword = ({
         className="w-full"
         disabled={isLoading}
         onClick={sendOTP}
+        data-cy="reset-password"
       >
         {isLoading ? (
           <Loader2 className="animate-spin" />

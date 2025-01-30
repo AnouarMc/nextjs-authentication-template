@@ -78,12 +78,13 @@ const PasswordResetOTP = ({
                 <div className="flex flex-col items-center">
                   <FormControl>
                     <InputOTP
+                      {...field}
                       autoFocus
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
                       disabled={isSubmitting}
                       onComplete={verifyEmail}
-                      {...field}
+                      data-cy="otp-input"
                     >
                       {[...Array(6)].map((_, index) => (
                         <InputOTPGroup key={index}>

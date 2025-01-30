@@ -76,6 +76,7 @@ const SignInPassword = ({
                     variant="link"
                     type="button"
                     onClick={onForgotPassword}
+                    data-cy="forgot-password"
                   >
                     Forgot Password?
                   </Button>
