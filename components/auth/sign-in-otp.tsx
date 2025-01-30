@@ -76,6 +76,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
                       disabled={isLoading}
                       onComplete={verifyEmail}
                       {...field}
+                      data-cy="otp-input"
                     >
                       {[...Array(6)].map((_, index) => (
                         <InputOTPGroup key={index}>
@@ -96,6 +97,7 @@ const SignInOTP = ({ onAlternatives }: { onAlternatives: () => void }) => {
             className="w-full"
             type="submit"
             disabled={isLoading}
+            data-cy="next"
           >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>

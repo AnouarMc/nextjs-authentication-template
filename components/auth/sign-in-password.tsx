@@ -86,6 +86,7 @@ const SignInPassword = ({
                     {...field}
                     autoFocus
                     disabled={isLoading}
+                    data-cy="password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -98,6 +99,7 @@ const SignInPassword = ({
             className="w-full"
             type="submit"
             disabled={isLoading}
+            data-cy="next"
           >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>

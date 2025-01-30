@@ -71,7 +71,12 @@ const SignInEmail = () => {
               <FormItem>
                 <FormLabel disabled={isLoading}>Email Address</FormLabel>
                 <FormControl>
-                  <FormInput autoFocus disabled={isLoading} {...field} />
+                  <FormInput
+                    autoFocus
+                    disabled={isLoading}
+                    {...field}
+                    data-cy="email"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,6 +88,7 @@ const SignInEmail = () => {
             className="w-full"
             type="submit"
             disabled={isLoading}
+            data-cy="next"
           >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Continue"}
           </Button>
