@@ -81,6 +81,7 @@ const SignUpVerification = () => {
                       disabled={isLoading}
                       onComplete={finalizeSignup}
                       {...field}
+                      data-cy="otp-input"
                     >
                       {[...Array(6)].map((_, index) => (
                         <InputOTPGroup key={index}>

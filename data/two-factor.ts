@@ -1,3 +1,5 @@
+import "server-only";
+
 import { db } from "@/data/db";
 import { encrypt } from "@/lib/encryption";
 import { generateBackupCodes } from "@/lib/two-factor";
