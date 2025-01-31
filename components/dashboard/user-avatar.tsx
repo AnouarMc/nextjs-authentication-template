@@ -15,6 +15,7 @@ const UserAvatar = ({ user, preview, className }: UserAvatarProps) => {
         className="rounded-full"
         src={preview ?? user?.image ?? undefined}
         alt={`${user?.name} profile picture`}
+        data-cy="user-image"
       />
       <AvatarFallback className="rounded-full text-white bg-primary">
         {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase()}

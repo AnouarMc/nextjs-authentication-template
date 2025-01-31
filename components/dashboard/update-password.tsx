@@ -67,6 +67,7 @@ const UpdatePassword = () => {
             variant="ghost"
             className="ml-auto text-primary hover:text-primary/90"
             onClick={() => setShowUpdate(true)}
+            data-cy="update-password"
           >
             Update Password
           </Button>
@@ -93,6 +94,7 @@ const UpdatePassword = () => {
                         type="password"
                         autoFocus
                         disabled={isSubmitting}
+                        data-cy="current-password"
                       />
                     </FormControl>
                     <FormMessage />
@@ -110,6 +112,7 @@ const UpdatePassword = () => {
                         {...field}
                         disabled={isSubmitting}
                         type="password"
+                        data-cy="new-password"
                       />
                     </FormControl>
                     <FormMessage />
@@ -129,6 +132,7 @@ const UpdatePassword = () => {
                         {...field}
                         disabled={isSubmitting}
                         type="password"
+                        data-cy="confirm-password"
                       />
                     </FormControl>
                     <FormMessage />
@@ -147,7 +151,11 @@ const UpdatePassword = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  data-cy="next-update-password"
+                >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" />
                   ) : (

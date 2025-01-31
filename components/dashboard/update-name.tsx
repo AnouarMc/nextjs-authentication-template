@@ -55,7 +55,12 @@ const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
             <FormItem>
               <FormLabel disabled={isLoading}>Name</FormLabel>
               <FormControl>
-                <FormInput autoFocus {...field} disabled={isLoading} />
+                <FormInput
+                  autoFocus
+                  {...field}
+                  disabled={isLoading}
+                  data-cy="user-name"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -73,6 +78,7 @@ const UpdateName = ({ user, onClose }: { user: User; onClose: () => void }) => {
           <Button
             type="submit"
             disabled={isLoading || form.getValues("name") === user.name}
+            data-cy="update-user-name"
           >
             {isSubmitting ? <Loader2 className="animate-spin" /> : "Update"}
           </Button>

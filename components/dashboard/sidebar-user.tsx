@@ -31,6 +31,7 @@ const SidebarUser = ({ user }: { user?: User }) => {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              data-cy="sidebar-user"
             >
               <UserAvatar user={user} />
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -61,6 +62,7 @@ const SidebarUser = ({ user }: { user?: User }) => {
               onClick={async () => {
                 await logOut();
               }}
+              data-cy="sign-out-button"
             >
               <LogOut />
               <span>Log out</span>

@@ -112,6 +112,7 @@ const UpdateImage = ({ user }: { user: User }) => {
                       accept={acceptedImageTypes.join(",")}
                       className="hidden"
                       ref={fileInputRef}
+                      data-cy="image-input"
                     />
                   </FormControl>
                   <FormMessage />

@@ -78,7 +78,7 @@ const SignInEmail = () => {
                     data-cy="email"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage data-cy="email-error" />
               </FormItem>
             )}
           />

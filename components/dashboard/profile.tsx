@@ -29,7 +29,10 @@ const Profile = ({ user }: { user: User }) => {
           )}
         >
           <UserAvatar user={user} className="shrink-0" />
-          <div className="text-ellipsis overflow-hidden whitespace-nowrap flex-shrink">
+          <div
+            className="text-ellipsis overflow-hidden whitespace-nowrap flex-shrink"
+            data-cy="user-name-label"
+          >
             {user?.name}
           </div>
 
@@ -37,6 +40,7 @@ const Profile = ({ user }: { user: User }) => {
             variant="ghost"
             className="ml-auto text-primary hover:text-primary"
             onClick={() => setShowUpdate(true)}
+            data-cy="update-profile"
           >
             Update Profile
           </Button>

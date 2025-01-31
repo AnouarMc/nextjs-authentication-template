@@ -43,6 +43,7 @@ const DeleteUser = () => {
             "text-destructive hover:!text-destructive transition-opacity duration-300",
             { "opacity-0 pointer-events-none": showRemove }
           )}
+          data-cy="delete-user"
         >
           Delete Account
         </Button>
@@ -64,8 +65,8 @@ const DeleteUser = () => {
             autoFocus
             value={data}
             onChange={(e) => setData(e.currentTarget.value)}
+            data-cy="confirm-delete-input"
           />
-
           <form onSubmit={onRemove} className="flex gap-x-2 justify-end mt-4">
             <Button
               type="button"
@@ -82,6 +83,7 @@ const DeleteUser = () => {
             <Button
               variant="destructive"
               disabled={isSubmitting || data !== "Delete account"}
+              data-cy="confirm-delete-user"
             >
               {isSubmitting ? <Loader2 className="animate-spin" /> : "Delete"}
             </Button>
