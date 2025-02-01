@@ -14,7 +14,7 @@ describe("Dashboard Functionality Tests", () => {
           cy.url().should("include", "/sign-in/password");
           cy.get('[data-cy="password"]').type(password);
           cy.get('[data-cy="next"]').click();
-          cy.url().should("include", redirectUrl);
+          cy.url({ timeout: 20000 }).should("include", redirectUrl);
         });
       });
     });

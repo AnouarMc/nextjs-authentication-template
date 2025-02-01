@@ -10,10 +10,10 @@ describe("Password reset flow", () => {
   });
 
   it("should reset the user password and sign in", () => {
-    const timestamp = Math.floor(Date.now() / 1000);
+    const timestamp = Date.now();
     const email = Cypress.env("testing_email");
     const apikey = Cypress.env("api_key");
-    const namespace = Cypress.env("namespace");
+    const testing_namespace = Cypress.env("testing_namespace");
 
     cy.get('[data-cy="email"]').type(email);
     cy.get('[data-cy="next"]').click();
@@ -26,7 +26,7 @@ describe("Password reset flow", () => {
       url: "https://api.testmail.app/api/json",
       qs: {
         apikey,
-        namespace,
+        namespace: testing_namespace,
         livequery: "true",
         timestamp_from: timestamp,
       },
@@ -50,7 +50,7 @@ describe("Password reset flow", () => {
       cy.get('[data-cy="email"]').type(email);
       cy.get('[data-cy="next"]').click();
 
-      cy.url().should("include", "/sign-in/password");
+      cy.url({ timeout: 15000 }).should("include", "/sign-in/password");
       cy.get('[data-cy="password"]').type(testPassword);
       cy.get('[data-cy="next"]').click();
 

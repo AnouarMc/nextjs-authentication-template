@@ -8,11 +8,11 @@ describe("Sign-up flow", () => {
   });
 
   it("should sign up a new user", () => {
-    const timestamp = Math.floor(Date.now() / 1000);
+    const timestamp = Date.now();
     const email = Cypress.env("testing_email");
     const password = Cypress.env("testing_password");
     const apikey = Cypress.env("api_key");
-    const namespace = Cypress.env("namespace");
+    const testing_namespace = Cypress.env("testing_namespace");
 
     cy.get('[data-cy="email"]').type(email);
     cy.get('[data-cy="password"]').type(password);
@@ -23,7 +23,7 @@ describe("Sign-up flow", () => {
       url: "https://api.testmail.app/api/json",
       qs: {
         apikey,
-        namespace,
+        namespace: testing_namespace,
         livequery: "true",
         timestamp_from: timestamp,
       },

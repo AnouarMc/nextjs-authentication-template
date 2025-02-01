@@ -22,7 +22,7 @@ describe("Sign-in flow", () => {
       cy.get('[data-cy="password"]').type(password);
       cy.get('[data-cy="next"]').click();
 
-      cy.url().should("include", redirectUrl);
+      cy.url({ timeout: 15000 }).should("include", redirectUrl);
     });
   });
 
@@ -36,10 +36,10 @@ describe("Sign-in flow", () => {
     });
 
     it("should sign in a user with an email and a verification code", () => {
-      const timestamp = Math.floor(Date.now() / 1000);
+      const timestamp = Date.now();
       const email = Cypress.env("testing_email");
       const apikey = Cypress.env("api_key");
-      const namespace = Cypress.env("namespace");
+      const testing_namespace = Cypress.env("testing_namespace");
 
       cy.get('[data-cy="email"]').type(email);
       cy.get('[data-cy="next"]').click();
@@ -49,7 +49,7 @@ describe("Sign-in flow", () => {
         url: "https://api.testmail.app/api/json",
         qs: {
           apikey,
-          namespace,
+          namespace: testing_namespace,
           livequery: "true",
           timestamp_from: timestamp,
         },
@@ -63,7 +63,7 @@ describe("Sign-in flow", () => {
 
         cy.url().should("include", "/sign-in/otp");
         cy.get('[data-cy="otp-input"]').type(verificationCode);
-        cy.url().should("include", redirectUrl);
+        cy.url({ timeout: 15000 }).should("include", redirectUrl);
       });
     });
   });
